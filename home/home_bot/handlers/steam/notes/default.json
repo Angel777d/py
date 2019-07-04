@@ -1,0 +1,15 @@
+{
+  "game_id": "default",
+  "messages": {
+    "ru": [
+      "[Global] Найди горящую машину!",
+      "[Global] Садись в горящую машину!",
+      "[Global] Сгори!"
+    ],
+    "en": [
+      "[Global] Do a barrel roll.",
+      "[Global] RAWR I'M A LION!",
+      "[Global] JESUS CHRIST IT’S A LION GET IN THE CAR"
+    ]
+  }
+}
