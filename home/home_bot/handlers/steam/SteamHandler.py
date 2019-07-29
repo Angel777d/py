@@ -1,11 +1,10 @@
 import logging
 import sqlite3
 import threading
-from sqlite3 import Connection, Cursor
 from time import sleep
 
 from telegram import Update
-from telegram.ext import CommandHandler, CallbackContext, Updater
+from telegram.ext import CommandHandler, CallbackContext
 
 from home_bot.env import Env
 from home_bot.handlers.steam import SteamMessages, steam_api
@@ -15,11 +14,11 @@ TIME_GAP = 3
 
 class SteamStorage:
     def __init__(self, path: str):
-        self.path: str = path
+        self.path = path
         # noinspection PyTypeChecker
-        self.conn: Connection = None
+        self.conn = None
         # noinspection PyTypeChecker
-        self.cursor: Cursor = None
+        self.cursor = None
 
     def init(self):
         self.conn = sqlite3.connect(self.path)
@@ -72,8 +71,8 @@ class SteamStorage:
 
 class SteamService:
     def __init__(self, env: Env):
-        self.updater: Updater = env.updater
-        self.storage: SteamStorage = SteamStorage("mydatabase.db")
+        self.updater = env.updater
+        self.storage = SteamStorage("mydatabase.db")
         self.commands = []
         env.dispatcher.add_handler(CommandHandler('steam', self.handle))
 
@@ -84,8 +83,12 @@ class SteamService:
             self.process_commands()
 
             active = self.storage.get_active()
+            steam_ids = [steam_id for _, steam_id, _, _, _ in active]
+            steam_players = steam_api.get_players(steam_ids)
+
             for uid, steam_id, chat_id, language_code, enabled in active:
-                self.send_note(steam_id, chat_id, language_code)
+                player = steam_players[steam_id]
+                self.send_note(player, chat_id, language_code)
 
             sleep(TIME_GAP)
 
@@ -123,7 +126,7 @@ class SteamService:
         else:
             chat_id = update.message.chat_id
             steam_id = context.args[1]
-            player = steam_api.get_player(steam_id)
+            player = steam_api.get_players([steam_id])[steam_id]
             if player:
                 language_code = update.message.from_user.language_code
                 self.storage.insert(uid, steam_id, chat_id, language_code)
@@ -160,14 +163,14 @@ class SteamService:
         self.storage.delete(uid)
         return "Oh! Hello friend. Sorry I can't remember your name..."
 
-    def send_note(self, steam_id, chat_id, language_code):
-        player = steam_api.get_player(steam_id)
+    def send_note(self, player, chat_id, language_code):
         if player and player.gameid:
             message = SteamMessages.get_note(player.gameid, language_code)
             self.updater.bot.send_message(chat_id=chat_id, text=message)
 
 
 def init(env: Env):
+    steam_api.set_steam_api_key(env.config.steam_api)
     service = SteamService(env)
 
     # start service

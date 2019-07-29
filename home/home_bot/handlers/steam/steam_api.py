@@ -1,16 +1,17 @@
 import json
 import urllib.request
+from encodings import utf_8
 from enum import Enum
 
-import home_bot.config
-from home_bot.config import STEAM_API
+__STEAM_API = ""
 
 # "http://api.steampowered.com/IPlayerService/IsPlayingSharedGame/v0001/?key=%s&steamid=%s&appid_playing=%s"
 GET_PLAYER_SUMMARIES = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=%s&steamids=%s"
 
 
 def set_steam_api_key(steam_api_key):
-    home_bot.config.STEAM_API = steam_api_key
+    global __STEAM_API
+    __STEAM_API = steam_api_key
 
 
 class PersonaState(Enum):
@@ -26,39 +27,39 @@ class PersonaState(Enum):
 class SteamPlayer:
     def __init__(self, src):
         # Public data
-        self.steamid: str = src.get("steamid")
-        self.personaname: str = src.get("personaname")
-        self.profileurl: str = src.get("profileurl")
-        self.avatar: str = src.get("avatar")
-        self.avatarmedium: str = src.get("avatarmedium")
-        self.avatarfull: str = src.get("avatarfull")
-        self.personastate: PersonaState = PersonaState(src.get("personastate", 0))
-        self.communityvisibilitystate: int = src.get("communityvisibilitystate")
-        self.profilestate: int = src.get("profilestate")
-        self.lastlogoff: int = src.get("lastlogoff")
-        self.commentpermission: int = src.get("commentpermission")
+        self.steamid = src.get("steamid")
+        self.personaname = src.get("personaname")
+        self.profileurl = src.get("profileurl")
+        self.avatar = src.get("avatar")
+        self.avatarmedium = src.get("avatarmedium")
+        self.avatarfull = src.get("avatarfull")
+        self.personastate = PersonaState(src.get("personastate", 0))
+        self.communityvisibilitystate = src.get("communityvisibilitystate")
+        self.profilestate = src.get("profilestate")
+        self.lastlogoff = src.get("lastlogoff")
+        self.commentpermission = src.get("commentpermission")
 
         # Private data
-        self.realname: str = src.get("realname")
-        self.primaryclanid: str = src.get("primaryclanid")
-        self.timecreated: int = src.get("timecreated")
-        self.gameid: int = src.get("gameid")
-        self.gameserverip: int = src.get("gameserverip")
-        self.gameextrainfo: int = src.get("gameextrainfo")
-        self.cityid: int = src.get("cityid")
-        self.loccountrycode: str = src.get("loccountrycode")
-        self.locstatecode: str = src.get("locstatecode")
-        self.loccityid: int = src.get("loccityid")
+        self.realname = src.get("realname")
+        self.primaryclanid = src.get("primaryclanid")
+        self.timecreated = src.get("timecreated")
+        self.gameid = src.get("gameid")
+        self.gameserverip = src.get("gameserverip")
+        self.gameextrainfo = src.get("gameextrainfo")
+        self.cityid = src.get("cityid")
+        self.loccountrycode = src.get("loccountrycode")
+        self.locstatecode = src.get("locstatecode")
+        self.loccityid = src.get("loccityid")
 
         # some event data?
-        self.personastateflags: int = src.get("personastateflags")
+        self.personastateflags = src.get("personastateflags")
 
 
-def get_player(steam_id):
-    url = GET_PLAYER_SUMMARIES % (STEAM_API, steam_id)
+def get_players(steam_ids):
+    steam_ids = ",".join(steam_ids)
+    url = GET_PLAYER_SUMMARIES % (__STEAM_API, steam_ids)
     with urllib.request.urlopen(url) as response:
-        result = json.loads(response.read())
-
+        result = utf_8.decode(response.read())[0]
+        result = json.loads(result)
         players = result.get("response").get("players")
-        player = next((player for player in players if player.get("steamid") == steam_id), None)
-        return SteamPlayer(player) if player else None
+        return {player.get("steamid"): SteamPlayer(player) for player in players}

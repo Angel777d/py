@@ -2,7 +2,7 @@ from . import en
 from . import ru
 
 _locales = {}
-_currentLocale: str = "en"
+_currentLocale = "en"
 
 
 def loc(ids):
