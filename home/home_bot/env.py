@@ -35,6 +35,10 @@ class Config:
     def superuser(self):
         return self.__data.get("superuser", None)
 
+    @property
+    def steam_request_delay(self):
+        return self.__data.get("steam_request_delay", None)
+
 
 class Env:
     def __init__(self):

@@ -9,8 +9,6 @@ from telegram.ext import CommandHandler, CallbackContext
 from home_bot.env import Env
 from home_bot.handlers.steam import SteamMessages, steam_api
 
-TIME_GAP = 3
-
 
 class SteamStorage:
     def __init__(self, path: str):
@@ -74,6 +72,7 @@ class SteamService:
         self.updater = env.updater
         self.storage = SteamStorage("mydatabase.db")
         self.commands = []
+        self.delay = env.config.steam_request_delay
         env.dispatcher.add_handler(CommandHandler('steam', self.handle))
 
     def run(self):
@@ -90,7 +89,7 @@ class SteamService:
                 player = steam_players[steam_id]
                 self.send_note(player, chat_id, language_code)
 
-            sleep(TIME_GAP)
+            sleep(self.delay)
 
     def handle(self, update: Update, context: CallbackContext):
         logging.log(logging.INFO, "/steam called. args: %s", context.args)
