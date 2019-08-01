@@ -97,6 +97,12 @@ class SteamService:
 
     def process_commands(self):
         for update, context in self.commands:
+
+            # to avoid "edit message" cases
+            if not update.message:
+                # print("something wrong with message", update)
+                continue
+
             parse_mode = None
             if len(context.args) == 0:
                 result = self.info()
