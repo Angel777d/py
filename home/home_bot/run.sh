@@ -22,6 +22,7 @@ echo "home_bot stopped"
 ;;
 
 *) # default case
+source ./env/bin/activate
 nohup python3 run.py &
 echo "home_bot started pid" $!
 echo "use ./run.sh stop to stop service."
