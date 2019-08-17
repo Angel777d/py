@@ -13,12 +13,10 @@ def run():
     # basic commands
     BasicCommandsHandler.init(env)
 
-    # tutorial items
-    # EchoHandler.init(dispatcher)
-    # CapsHandler.init(dispatcher)
-
-    # project handlers
+    # Open html page or file with bot
     OpenHandler.init(env)
+
+    # Steam commands
     SteamHandler.init(env)
 
     # inline functions
