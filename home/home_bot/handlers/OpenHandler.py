@@ -5,7 +5,7 @@ import sys
 from telegram import Update
 from telegram.ext import CommandHandler, CallbackContext
 
-from home_bot.env import Env
+from env import Env
 
 ALLOWED_USERS = ["173774267"]
 

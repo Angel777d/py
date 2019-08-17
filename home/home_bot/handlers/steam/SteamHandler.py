@@ -6,8 +6,8 @@ from time import sleep
 from telegram import Update
 from telegram.ext import CommandHandler, CallbackContext
 
-from home_bot.env import Env
-from home_bot.handlers.steam import SteamMessages, steam_api
+from env import Env
+from handlers.steam import SteamMessages, steam_api
 
 
 class SteamStorage:

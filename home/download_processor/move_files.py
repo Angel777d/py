@@ -2,7 +2,7 @@ import os
 import shutil
 import time
 
-from . import rules
+import rules
 
 TIME_PERIOD = 5  # in seconds
 

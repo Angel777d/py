@@ -1,8 +1,8 @@
 import logging
 
-from home_bot.env import Env
-from home_bot.handlers import BasicCommandsHandler, OpenHandler, UnknownHandler
-from home_bot.handlers.steam import SteamHandler
+from env import Env
+from handlers import BasicCommandsHandler, OpenHandler, UnknownHandler
+from handlers.steam import SteamHandler
 
 
 def run():

@@ -3,7 +3,7 @@ import logging
 from telegram import Update
 from telegram.ext import CommandHandler, CallbackContext
 
-from home_bot.env import Env
+from env import Env
 
 
 class StartHandler:

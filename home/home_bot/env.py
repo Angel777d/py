@@ -3,13 +3,12 @@ import os
 
 from telegram.ext import Updater
 
-from home_bot import proxy
+import proxy
 
 
 class Config:
     def __init__(self):
-        path = os.path.dirname(__file__)
-        path = os.path.join(path, "config.json")
+        path = os.path.join("config.json")
         file = open(path)
 
         self.__data = json.loads(file.read())
