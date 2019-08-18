@@ -16,6 +16,7 @@ python3 -m pip install -r requirements.txt
 export PYTHONPATH=$PYTHONPATH:$DIRSTACK"/../base_bot":$DIRSTACK"/../localization"
 echo "modules from requirements.txt installed"
 echo "PYTHONPATH " $PYTHONPATH
+deactivate
 ;;
 
 stop)
