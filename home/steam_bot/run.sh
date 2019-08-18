@@ -3,6 +3,7 @@
 run_option=$1
 script_name="steam_bot.py"
 env_name=".env"
+parent_dir="$(dirname "$PWD")"
 
 case ${run_option} in
 
@@ -15,7 +16,7 @@ source ./${env_name}/bin/activate
 echo "env activated"
 python3 -m pip install -r requirements.txt
 echo "modules from requirements.txt installed"
-export PYTHONPATH=$PYTHONPATH:${PWD}"/../base_bot/":${PWD}"/../localization/"
+export PYTHONPATH=$PYTHONPATH:${parent_dir}"/base_bot":${parent_dir}"/localization"
 echo "PYTHONPATH " $PYTHONPATH
 deactivate
 echo "Setup is done."
