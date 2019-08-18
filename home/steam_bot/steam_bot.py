@@ -1,9 +1,9 @@
 import logging
 import os
 
-import SteamHandler
+import SteamService
 import UnknownHandler
-from BorEnv import BotEnv
+from BotEnv import BotEnv
 from SteamBotConfig import SteamBotConfig
 
 
@@ -14,7 +14,7 @@ def run():
     env = BotEnv(SteamBotConfig(config_path))
 
     # Steam commands
-    SteamHandler.init(env)
+    SteamService.init(env)
 
     # Must be the last handler
     UnknownHandler.init(env)

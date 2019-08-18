@@ -1,7 +1,7 @@
 from telegram import Update
 from telegram.ext import CallbackContext, MessageHandler, Filters
 
-from BorEnv import BotEnv
+from BotEnv import BotEnv
 
 
 class UnknownHandler:

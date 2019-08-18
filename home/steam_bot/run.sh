@@ -13,17 +13,19 @@ echo "env created"
 source ./env/bin/activate
 echo "env activated"
 python3 -m pip install -r requirements.txt
+export PYTHONPATH=$PYTHONPATH:$DIRSTACK"/base_bot":$DIRSTACK"/localization"
 echo "modules from requirements.txt installed"
+echo "PYTHONPATH " $PYTHONPATH
 ;;
 
 stop)
-pkill -f run.py
+pkill -f steam_bot.py
 echo "steam_bot stopped"
 ;;
 
 *) # default case
 source ./env/bin/activate
-nohup python3 run.py &
+nohup python3 steam_bot.py &
 echo "steam_bot started pid" $!
 echo "use ./run.sh stop to stop service."
 echo "use ./run.sh setup to setup bot environment."
