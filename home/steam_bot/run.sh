@@ -18,13 +18,13 @@ echo "modules from requirements.txt installed"
 
 stop)
 pkill -f run.py
-echo "home_bot stopped"
+echo "steam_bot stopped"
 ;;
 
 *) # default case
 source ./env/bin/activate
 nohup python3 run.py &
-echo "home_bot started pid" $!
+echo "steam_bot started pid" $!
 echo "use ./run.sh stop to stop service."
 echo "use ./run.sh setup to setup bot environment."
 echo "\r\n"

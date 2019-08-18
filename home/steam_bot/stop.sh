@@ -1,4 +1,4 @@
 #!/bin/bash
 pkill -f run.py
-echo "home_bot stopped"
+echo "steam_bot stopped"
 exit 0

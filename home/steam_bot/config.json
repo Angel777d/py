@@ -1,0 +1,7 @@
+{
+  "bot_token": "",
+  "steam_api": "",
+  "steam_request_delay": 5,
+  "use_proxy": false,
+  "superuser": -1
+}

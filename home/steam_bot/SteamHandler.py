@@ -1,21 +1,21 @@
 import logging
 import sqlite3
 import threading
+from functools import partial
 from time import sleep
 
 from telegram import Update
 from telegram.ext import CommandHandler, CallbackContext
 
-from env import Env
-from handlers.steam import SteamMessages, steam_api
+import SteamMessages
+import steam_api
+from BorEnv import BotEnv
 
 
 class SteamStorage:
     def __init__(self, path: str):
         self.path = path
-        # noinspection PyTypeChecker
         self.conn = None
-        # noinspection PyTypeChecker
         self.cursor = None
 
     def init(self):
@@ -68,12 +68,18 @@ class SteamStorage:
 
 
 class SteamService:
-    def __init__(self, env: Env):
+    def __init__(self, env: BotEnv):
         self.updater = env.updater
         self.storage = SteamStorage("mydatabase.db")
         self.commands = []
         self.delay = env.config.steam_request_delay
-        env.dispatcher.add_handler(CommandHandler('steam', self.handle))
+
+        env.dispatcher.add_handler(CommandHandler('help', partial(self.handle, "help")))
+        env.dispatcher.add_handler(CommandHandler('start', partial(self.handle, "start")))
+        env.dispatcher.add_handler(CommandHandler('stop', partial(self.handle, "stop")))
+        env.dispatcher.add_handler(CommandHandler('settings', partial(self.handle, "settings")))
+        env.dispatcher.add_handler(CommandHandler('remove', partial(self.handle, "remove")))
+        env.dispatcher.add_handler(CommandHandler('reload', partial(self.handle, "reload")))
 
     def run(self):
         self.storage.init()
@@ -91,12 +97,12 @@ class SteamService:
 
             sleep(self.delay)
 
-    def handle(self, update: Update, context: CallbackContext):
-        logging.log(logging.INFO, "/steam called. args: %s", context.args)
-        self.commands.append((update, context))
+    def handle(self, command: str, update: Update, context: CallbackContext):
+        logging.log(logging.INFO, "/%s called. args: %s", command, context.args)
+        self.commands.append((command, update, context))
 
     def process_commands(self):
-        for update, context in self.commands:
+        for command, update, context in self.commands:
 
             # to avoid "edit message" cases
             if not update.message:
@@ -104,35 +110,40 @@ class SteamService:
                 continue
 
             parse_mode = None
-            if len(context.args) == 0:
+            if command == "help":
                 result = self.info()
-            elif context.args[0] == "start":
+            elif command == "start":
                 result, parse_mode = self.process_start(update, context)
-            elif context.args[0] == "stop":
+            elif command == "stop":
                 result = self.process_stop(update)
-            elif context.args[0] == "remove":
+            elif command == "settings":
+                result = self.process_settings(update, context)
+            elif command == "remove":
                 result = self.process_remove(update)
             elif context.args[0] == "reload":
+                # TODO: add superuser check
                 result = self.reload()
             else:
                 result = self.info()
             self.updater.bot.send_message(chat_id=update.message.chat_id, text=result, parse_mode=parse_mode)
         self.commands.clear()
 
-    def process_start(self, update, context):
+    def process_settings(self, update, context):
+        if len(context.args) == 0:
+            return self.info()
+
+        result = self.info()
         parse_mode = None
-        uid = update.message.from_user.id
-        stored_info = self.storage.get(uid)
-        if stored_info:
-            self.storage.update_enabled(uid, True)
-            result = "I remember you. Service enabled"
-        elif len(context.args) < 2:
-            result = "Were is your steam id?"
-        else:
-            chat_id = update.message.chat_id
-            steam_id = context.args[1]
+
+        args = context.args
+        option_name = args[0]
+
+        if option_name == "id":
+            steam_id = args[1]
             player = steam_api.get_players([steam_id])[steam_id]
             if player:
+                uid = update.message.from_user.id
+                chat_id = update.message.chat_id
                 language_code = update.message.from_user.language_code
                 self.storage.insert(uid, steam_id, chat_id, language_code)
 
@@ -141,10 +152,28 @@ class SteamService:
                 show_name = "%s %s %s." % (name, "aka" if name and nick else "", nick)
                 result = "%s\n[%s](%s)" % ("Steam started successfully.", show_name, player.profileurl)
                 parse_mode = "markdown"
-
             else:
                 result = "Sorry, cant find user by id %s" % steam_id
+        elif option_name == "remove":
+            result = self.process_remove(update)
+
         return result, parse_mode
+
+    def process_start(self, update, context):
+        parse_mode = None
+        uid = update.message.from_user.id
+        stored_info = self.storage.get(uid)
+        if stored_info:
+            self.storage.update_enabled(uid, True)
+            result = "Service enabled"
+        else:
+            result = self.info()
+
+        return result, parse_mode
+
+    def setup_steam_id(self, steam_id):
+
+        pass
 
     @staticmethod
     def reload():
@@ -153,10 +182,15 @@ class SteamService:
 
     @staticmethod
     def info():
-        info_message = "usage:\n /steam start <your steam id>\n"
-        info_message += "/steam stop\n"
-        info_message += "/steam reload"
-        return info_message
+        return """To use steam advice bot provide your steam ID with /settings command.
+To find ID open your page in browser and get last digits from address.
+ID for https://steamcommunity.com/profiles/100500 is 100500.
+Commands:
+/settings id <your steam id>  # setup your steam id
+/settings remove  # remove your steam id
+/start  # start steam advice bot
+/stop  # stop steam advice bot
+/help  # to show this message"""
 
     def process_stop(self, update: Update):
         uid = update.message.from_user.id
@@ -174,7 +208,7 @@ class SteamService:
             self.updater.bot.send_message(chat_id=chat_id, text=message)
 
 
-def init(env: Env):
+def init(env: BotEnv):
     steam_api.set_steam_api_key(env.config.steam_api)
     service = SteamService(env)
 
