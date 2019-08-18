@@ -4,6 +4,9 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/steam_bot" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/download_processor" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/base_bot" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/home_bot" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/localization" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="Remote Python 3.5.3 (sftp://angel@angelovich.ru:22/usr/bin/python3)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
