@@ -1,7 +1,7 @@
 #!/bin/bash
 
 run_option=$1
-script_name="steam_bot.py"
+script_name="run.py"
 env_name=".env"
 parent_dir="$(dirname "$PWD")"
 
@@ -28,6 +28,7 @@ echo "steam_bot stopped"
 *) # default case
  # shellcheck source=./.env/bin/activate
 source ./${env_name}/bin/activate
+echo "${env_name} activated"
 export PYTHONPATH=$PYTHONPATH:${parent_dir}"/base_bot/":${parent_dir}"/localization/"
 echo "PYTHONPATH=""$PYTHONPATH"
 nohup python3 ${script_name} &
