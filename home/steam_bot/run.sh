@@ -1,36 +1,39 @@
 #!/bin/bash
 
-# script_name=$0
 run_option=$1
-
+script_name="steam_bot.py"
+env_name=".env"
 
 case ${run_option} in
 
 setup)
 echo "setup python env for home bot"
-python3 -m venv env
+python3 -m venv ${env_name}
 echo "env created"
-source ./env/bin/activate
+# shellcheck source=./.env/bin/activate
+source ./${env_name}/bin/activate
 echo "env activated"
 python3 -m pip install -r requirements.txt
-export PYTHONPATH=$PYTHONPATH:$DIRSTACK"/../base_bot":$DIRSTACK"/../localization"
 echo "modules from requirements.txt installed"
+export PYTHONPATH=$PYTHONPATH:${PWD}"/../base_bot/":${PWD}"/../localization/"
 echo "PYTHONPATH " $PYTHONPATH
 deactivate
+echo "Setup is done."
 ;;
 
 stop)
-pkill -f steam_bot.py
+pkill -f ${script_name}
 echo "steam_bot stopped"
 ;;
 
 *) # default case
-source ./env/bin/activate
-nohup python3 steam_bot.py &
+ # shellcheck source=./.env/bin/activate
+source ./${env_name}/bin/activate
+nohup python3 ${script_name} &
 echo "steam_bot started pid" $!
 echo "use ./run.sh stop to stop service."
 echo "use ./run.sh setup to setup bot environment."
-echo "\r\n"
+printf "\r\n"
 
 esac
 
