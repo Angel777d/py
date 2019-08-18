@@ -13,7 +13,7 @@ echo "env created"
 source ./env/bin/activate
 echo "env activated"
 python3 -m pip install -r requirements.txt
-export PYTHONPATH=$PYTHONPATH:$DIRSTACK"/base_bot":$DIRSTACK"/localization"
+export PYTHONPATH=$PYTHONPATH:$DIRSTACK"/../base_bot":$DIRSTACK"/../localization"
 echo "modules from requirements.txt installed"
 echo "PYTHONPATH " $PYTHONPATH
 ;;
