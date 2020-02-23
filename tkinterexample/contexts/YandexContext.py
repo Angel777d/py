@@ -12,96 +12,95 @@ from yandex import LocalTrackList
 LANDING_PRIMARY = ["personal-playlists"]
 
 LANDING_PLAYLISTS = [
-    "new-releases",
-    "new-playlists",
-    "playlists",
+	"new-releases",
+	"new-playlists",
+	"playlists",
 ]
 
 LANDING_TARCKS = [
-    "chart",
+	"chart",
 ]
 
 LANDING_SECONDARY = [
-    "promotions",
-    "mixes",
-    "play-contexts"
-    "albums",
-    "artists",
+	"promotions",
+	"mixes",
+	"play-contexts"
+	"albums",
+	"artists",
 ]
 
 
 class YandexContext(IContext):
-    def __init__(self, env, data=None):
-        self.yandexData = env.data.setdefault("yandex", {})
-        self.client: Client = self.yandexData.get("client")
-        IContext.__init__(self, env, data)
-        # self.openMainWindow()
+	def __init__(self, env, data=None):
+		self.yandexData = env.data.setdefault("yandex", {})
+		self.client: Client = self.yandexData.get("client")
+		IContext.__init__(self, env, data)
 
-    def getListenersConfig(self):
-        return {
-            "yandex.download": self.downloadFiles,
-            "yandex.start": self.onStart,
-            "yandex.request.playlist": self.openPlayList,
-            "yandex.request.search": self.onSearch,
-        }
+	# self.openMainWindow()
 
-    def loadLanding(self):
-        def doLoad():
-            self.yandexData["landing"] = self.client.landing(LANDING_PRIMARY + LANDING_PLAYLISTS)
-            self.sendEvent("yandex.landing.dataChanged")
+	def getListenersConfig(self):
+		return {
+			"yandex.download": self.downloadFiles,
+			"yandex.start": self.onStart,
+			"yandex.request.playlist": self.openPlayList,
+			"yandex.request.search": self.onSearch,
+		}
 
-        thread = SimpleThread(doLoad, name="LoadLanding")
-        thread.start()
+	def loadLanding(self):
+		def doLoad():
+			self.yandexData["landing"] = self.client.landing(LANDING_PRIMARY + LANDING_PLAYLISTS)
+			self.sendEvent("yandex.landing.dataChanged")
 
-    def loadPlaylist(self, playlist):
-        client = self.client
+		thread = SimpleThread(doLoad, name="LoadLanding")
+		thread.start()
 
-        def doLoad():
-            tracks = client.users_playlists(kind=playlist.kind, user_id=playlist.uid)[0].tracks
-            self.yandexData["tracks"] = LocalTrackList.getTracks(tracks)
-            self.sendEvent("yandex.tracks.dataChanged")
+	def loadPlaylist(self, playlist):
+		client = self.client
 
-        thread = SimpleThread(doLoad, name="LoadPlaylist")
-        thread.start()
+		def doLoad():
+			tracks = client.users_playlists(kind=playlist.kind, user_id=playlist.uid)[0].tracks
+			self.yandexData["tracks"] = LocalTrackList.getTracks(tracks)
+			self.sendEvent("yandex.tracks.dataChanged")
 
-    def doSearch(self, entry):
-        client = self.client
-        print("start search:", entry)
+		thread = SimpleThread(doLoad, name="LoadPlaylist")
+		thread.start()
 
-        def doLoad():
-            result = client.search(entry)
-            self.yandexData["search"] = result
-            self.sendEvent("yandex.search.dataChanged")
-            print("search done", result)
+	def doSearch(self, entry):
+		client = self.client
+		print("start search:", entry)
 
-        thread = SimpleThread(doLoad, name="LoadPlaylist")
-        thread.start()
+		def doLoad():
+			result = client.search(entry)
+			self.yandexData["search"] = result
+			self.sendEvent("yandex.search.dataChanged")
+			print("search done", result)
 
-    def onStart(self, ev):
-        self.loadLanding()
-        self.sendEvent(Events.WINDOW_OPEN, name="window.yandex.landing")
+		thread = SimpleThread(doLoad, name="LoadPlaylist")
+		thread.start()
 
-    def onSearch(self, ev):
-        entry = ev.get("entry")
-        self.doSearch(entry)
+	def onStart(self, ev):
+		self.loadLanding()
+		self.sendEvent(Events.WINDOW_OPEN, name="window.yandex.landing")
 
-    def openPlayList(self, ev):
-        self.yandexData["playlist"] = playlist = ev.get("playlist")
-        self.yandexData["tracks"] = []
-        self.loadPlaylist(playlist)
+	def onSearch(self, ev):
+		entry = ev.get("entry")
+		self.doSearch(entry)
 
-    def downloadFiles(self, ev):
-        items = ev.get("items")
-        for info in items:
-            path = Path(self.env.config.get(ConfigProps.LIBRARY_PATH), info.folder)
-            import os
-            os.makedirs(path, exist_ok=True)
-            path.mkdir(parents=True, exist_ok=True)
-            path = path.joinpath(info.filename)
-            if not path.exists():
-                print("[Yandex] start download:", path)
-                info.entry.track.download(path)
-                print("[Yandex] downloaded:", path)
+	def openPlayList(self, ev):
+		self.yandexData["playlist"] = playlist = ev.get("playlist")
+		self.yandexData["tracks"] = []
+		self.loadPlaylist(playlist)
 
-            libEntry = MediaLibEntry(path.as_posix(), info.title, info.artist, info.album)
-            self.sendEvent("mediaLib.add.track", entry=libEntry)
+	def downloadFiles(self, ev):
+		items = ev.get("items")
+		for info in items:
+			path = Path(self.env.config.get(ConfigProps.LIBRARY_PATH), info.folder)
+			path.mkdir(parents=True, exist_ok=True)
+			path = path.joinpath(info.filename)
+			if not path.exists():
+				print("[Yandex] start download:", path)
+				info.entry.track.download(path)
+				print("[Yandex] downloaded:", path)
+
+			libEntry = MediaLibEntry(path.as_posix(), info.title, info.artist, info.album)
+			self.sendEvent("mediaLib.add.track", entry=libEntry)

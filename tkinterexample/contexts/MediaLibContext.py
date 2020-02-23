@@ -4,26 +4,26 @@ from model.MediaLibEntry import MediaLibEntry
 
 
 class MediaLibContext(IContext):
-    def __init__(self, env, data=None):
-        IContext.__init__(self, env, data)
-        self.mediaLibData = env.data.setdefault("mediaLib", {})
-        self.loadAll()
+	def __init__(self, env, data=None):
+		IContext.__init__(self, env, data)
+		self.mediaLibData = env.data.setdefault("mediaLib", {})
+		self.loadAll()
 
-    def getListenersConfig(self):
-        return {"mediaLib.add.track": self.onAddTrack}
+	def getListenersConfig(self):
+		return {"mediaLib.add.track": self.onAddTrack}
 
-    def loadAll(self):
-        conn = getConnection()
-        c = conn.cursor()
-        self.mediaLibData["allTracks"] = [MediaLibEntry.fromTuple(item) for item in getLibAll(c)]
-        conn.close()
-        print("[MediaLib] all tracks loaded:", len(self.mediaLibData["allTracks"]))
-        self.sendEvent("mediaLib.allTracksLoaded")
+	def loadAll(self):
+		conn = getConnection()
+		c = conn.cursor()
+		self.mediaLibData["allTracks"] = [MediaLibEntry.fromTuple(item) for item in getLibAll(c)]
+		conn.close()
+		print("[MediaLib] all tracks loaded:", len(self.mediaLibData["allTracks"]))
+		self.sendEvent("mediaLib.allTracksLoaded")
 
-    def onAddTrack(self, ev):
-        entry: MediaLibEntry = ev.get("entry")
-        conn = getConnection()
-        c = conn.cursor()
-        addLibEntry(c, **entry.getProps())
-        conn.commit()
-        conn.close()
+	def onAddTrack(self, ev):
+		entry: MediaLibEntry = ev.get("entry")
+		conn = getConnection()
+		c = conn.cursor()
+		addLibEntry(c, **entry.getProps())
+		conn.commit()
+		conn.close()

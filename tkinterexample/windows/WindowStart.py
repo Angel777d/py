@@ -9,33 +9,33 @@ from windows.PlayerWidget import PlayerWidget
 
 class WindowStart(IWindow):
 
-    def __init__(self, env, name, parentWindow, **kwargs):
-        self.child = ""
-        IWindow.__init__(self, env, name, parentWindow, **kwargs)
+	def __init__(self, env, name, parentWindow, **kwargs):
+		self.child = ""
+		IWindow.__init__(self, env, name, parentWindow, **kwargs)
 
-    @property
-    def viewContainer(self):
-        return self.getElement("mainFrame")
+	@property
+	def viewContainer(self):
+		return self.getElement("mainFrame")
 
-    def initUI(self):
-        player = PlayerWidget(self.env, self)
-        player.pack(side=BOTTOM, fill=X, expand=False)
+	def initUI(self):
+		player = PlayerWidget(self.env, self)
+		player.pack(side=BOTTOM, fill=X, expand=False)
 
-        menu = MenuWidget(self.env, self)
-        menu.pack(side=LEFT, fill=Y, expand=False)
-        menu.onYandex = self.onStartClick
+		menu = MenuWidget(self.env, self)
+		menu.pack(side=LEFT, fill=Y, expand=False)
+		menu.onYandex = self.onStartClick
 
-        mainFrame = Frame(self)
-        mainFrame.pack(side=LEFT, fill=BOTH, expand=True)
+		mainFrame = Frame(self)
+		mainFrame.pack(side=LEFT, fill=BOTH, expand=True)
 
-        return {"mainFrame": mainFrame, "player": player}
+		return {"mainFrame": mainFrame, "player": player}
 
-    def onInitialized(self):
-        self.sendEvent(Events.WINDOW_OPEN, name="window.localTracks", parent=self.name)
+	def onInitialized(self):
+		self.sendEvent(Events.WINDOW_OPEN, name="window.localTracks", parent=self.name)
 
-    def onStartClick(self):
-        self.sendEvent("yandex.login")
+	def onStartClick(self):
+		self.sendEvent("yandex.login")
 
-    def addChild(self, windowName, windowInstance):
-        self.closeChildren()
-        IWindow.addChild(self, windowName, windowInstance)
+	def addChild(self, windowName, windowInstance):
+		self.closeChildren()
+		IWindow.addChild(self, windowName, windowInstance)
