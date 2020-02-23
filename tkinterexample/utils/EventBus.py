@@ -15,7 +15,7 @@ class EventBus:
 
     def dispatch(self, eventName, eventData=None):
         callbackList = self.events.setdefault(eventName, [])
-        print("dispatch: %s, callbacks: %d, data: %s" % (eventName, len(callbackList), eventData))
+        print("[EventBus] dispatch: %s, callbacks: %d, data: %s" % (eventName, len(callbackList), eventData))
         for callback in callbackList:
             callback(eventName, eventData)
 

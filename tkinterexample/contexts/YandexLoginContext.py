@@ -21,19 +21,15 @@ class YandexLoginContext(IContext):
     def __init__(self, env, data=None):
         self.yandexData = env.data.setdefault("yandex", {})
         IContext.__init__(self, env, data)
-
-    def getListenersConfig(self):
-        return {
-            "yandex.login": self.starLogin,
-            "yandex.login.apply": self.onLoginApply
-        }
-
-    def starLogin(self, eventName, eventData):
         client = tryLoginWithToken()
         if client:
             self.onClientReady(client)
         else:
-            self.openWindow("window.yandex.login")
+            self.addEventListener("yandex.login", self.starLogin)
+            self.addEventListener("yandex.login.apply", self.onLoginApply)
+
+    def starLogin(self, eventName, eventData):
+        self.sendEvent2("win.open", name="window.yandex.login")
 
     def onLoginApply(self, eventName, eventData):
         login, password = eventData.get("login"), eventData.get("password")
@@ -45,8 +41,8 @@ class YandexLoginContext(IContext):
             return
 
         writeFile(Defaults.YANDEX_TOKEN_PATH, token)
-        self.closeWindow()
-
+        self.removeEventListener("yandex.login", self.starLogin)
+        self.removeEventListener("yandex.login.apply", self.onLoginApply)
         self.onClientReady(Client.from_token(token))
 
     def onClientReady(self, client):

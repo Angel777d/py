@@ -7,8 +7,9 @@ from utils import MediaKeysListener
 from utils.Env import Env
 from utils.StateManager import StateManager
 from windows.ConfigWindow import ConfigWindow
+from windows.IWindow import RootWindow
+from windows.LocalTracks import LocalTracks
 from windows.StartWindow import StartWindow
-from windows.WindowsManager import WindowsManager
 from windows.YandexLoadingWindow import YandexLoadingWindow
 from windows.YandexPlaylistWindow import YandexPlaylistWindow
 from windows.YandexStartWindow import YandexStartWindow
@@ -26,13 +27,14 @@ class Application:
         root.title("Yandex music API example")
         self.env.root = root
 
-        self.env.windowsManager = WindowsManager(self.env).applyConfig({
-            "window.start": StartWindow,
-            "window.config": ConfigWindow,
-            "window.yandex.start": YandexStartWindow,
-            "window.yandex.login": YandexLoginWindow,
-            "window.yandex.loading": YandexLoadingWindow,
-            "window.yandex.playlist": YandexPlaylistWindow,
+        self.env.rootWindow = RootWindow(self.env, {
+            "window.start": (StartWindow, "root"),
+            "window.config": (ConfigWindow, "window.start"),
+            "window.localTracks": (LocalTracks, "window.start"),
+            "window.yandex.login": (YandexLoginWindow, "window.start"),
+            "window.yandex.start": (YandexStartWindow, "window.start"),
+            "window.yandex.loading": (YandexLoadingWindow, "window.yandex.start"),
+            "window.yandex.playlist": (YandexPlaylistWindow, "window.yandex.start"),
         })
 
         self.env.contextManager = StateManager(self.env).applyConfig({
@@ -46,12 +48,5 @@ class Application:
         MediaKeysListener.setup({"media_play_pause": lambda: print("handlePlay")})
 
     def start(self):
-        self.env.contextManager.openState("context.audioPlayer")
-        self.env.contextManager.openState("context.mediaLib")
         self.env.contextManager.openState("context.start")
-        self.env.contextManager.openState("context.yandex.login")
-
-        self.env.windowsManager.openNext("window.start")
-        # self.env.windowsManager.openNext("window.config")
-
         self.env.root.mainloop()

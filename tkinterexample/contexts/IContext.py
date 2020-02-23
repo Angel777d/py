@@ -17,13 +17,3 @@ class IContext(IState, IEventHandler):
             eventData.update(data)
         eventData["name"] = contextName
         self.sendEvent("context.open", eventData)
-
-    def openWindow(self, windowName, data=None):
-        eventData = {}
-        if data:
-            eventData.update(data)
-        eventData["name"] = windowName
-        self.sendEvent("win.open", eventData)
-
-    def closeWindow(self):
-        self.sendEvent("win.close")

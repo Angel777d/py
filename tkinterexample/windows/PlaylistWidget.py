@@ -15,7 +15,7 @@ class PlaylistWidget(Frame):
         self.listbox.pack(side=TOP, fill=BOTH, pady=5, expand=True)
         self.button.pack(side=BOTTOM)
 
-    def setData(self, trackList):
+    def doUpdate(self, trackList):
         self.trackList = trackList
         self.listbox.delete(0, END)
 

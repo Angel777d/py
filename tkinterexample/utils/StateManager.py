@@ -1,3 +1,6 @@
+from utils.EventBus import IEventHandler
+
+
 class IState:
     def __init__(self, env, data=None):
         self.env = env
@@ -6,13 +9,26 @@ class IState:
         self.env = None
 
 
-class StateManager:
+class StateManager(IEventHandler):
     def __init__(self, env):
         self.env = env
         self.statesConfig = {}
         self.activeStates = {}
+        IEventHandler.__init__(self, env.eventBus)
 
-    def applyConfig(self, config:dict):
+    def getListenersConfig(self):
+        return {
+            "context.open": self.onContextOpen,
+            "context.close": self.onContextClose,
+        }
+
+    def onContextOpen(self, eventName, eventData):
+        self.openState(eventData["name"], eventData)
+
+    def onContextClose(self, eventName, eventData):
+        self.closeState(eventData["name"])
+
+    def applyConfig(self, config: dict):
         for stateName, stateClass in config.items():
             self.registerState(stateName, stateClass)
         return self
@@ -22,6 +38,7 @@ class StateManager:
         self.statesConfig[stateName] = stateClass
 
     def openState(self, stateName, data=None):
+        print("[State] open:", stateName)
         if stateName not in self.statesConfig:
             print("No state config for %s state" % stateName)
             return None
@@ -35,6 +52,7 @@ class StateManager:
         return state
 
     def closeState(self, stateName):
+        print("[State] close:", stateName)
         if stateName not in self.activeStates:
             print("State %s is not active" % stateName)
             return

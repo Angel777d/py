@@ -1,5 +1,6 @@
 from Mpg123Player import Mpg123Player
 from contexts.IContext import IContext
+from model import Events
 from model.MediaLibEntry import MediaLibEntry
 
 
@@ -10,9 +11,9 @@ class AudioPlayerContext(IContext):
 
     def getListenersConfig(self):
         return {
-            "audioPlayer.play": self.onPlay,
-            "audioPlayer.stop": self.onStop,
-            "audioPlayer.pause": self.onPause,
+            Events.PLAYER_PLAY: self.onPlay,
+            Events.PLAYER_STOP: self.onStop,
+            Events.PLAYER_TOGGLE_PAUSE: self.onPause,
         }
 
     def onPlay(self, eventName, eventData):
@@ -24,4 +25,4 @@ class AudioPlayerContext(IContext):
         self.__player.stop()
 
     def onPause(self, eventName, eventData):
-        self.__player.stop()
+        self.__player.togglePause()

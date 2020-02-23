@@ -34,11 +34,12 @@ class YandexContext(IContext):
         self.yandexData = env.data.setdefault("yandex", {})
         self.client: Client = self.yandexData.get("client")
         IContext.__init__(self, env, data)
-        self.openMainWindow()
+        # self.openMainWindow()
 
     def getListenersConfig(self):
         return {
             "yandex.download": self.downloadFiles,
+            "yandex.start": self.onStart,
             "yandex.openPlayList": self.openPlayList,
             "yandex.search": self.onSearch,
         }
@@ -46,7 +47,7 @@ class YandexContext(IContext):
     def loadLanding(self):
         def doLoad():
             self.yandexData["landing"] = self.client.landing(LANDING_PRIMARY + LANDING_PLAYLISTS)
-            self.sendEvent("yandex.landingLoaded")
+            self.sendEvent2("yandex.landingLoaded")
 
         thread = SimpleThread(doLoad, name="LoadLanding")
         thread.start()
@@ -57,7 +58,7 @@ class YandexContext(IContext):
         def doLoad():
             tracks = client.users_playlists(kind=playlist.kind, user_id=playlist.uid)[0].tracks
             self.yandexData["tracks"] = LocalTrackList.getTracks(tracks)
-            self.sendEvent("yandex.tracksLoaded")
+            self.sendEvent2("yandex.tracksLoaded")
 
         thread = SimpleThread(doLoad, name="LoadPlaylist")
         thread.start()
@@ -75,8 +76,8 @@ class YandexContext(IContext):
         thread = SimpleThread(doLoad, name="LoadPlaylist")
         thread.start()
 
-    def openMainWindow(self):
-        self.openWindow("window.yandex.start")
+    def onStart(self, evName, evData):
+        self.sendEvent2("win.open", name="window.yandex.start")
         self.loadLanding()
 
     def onSearch(self, evName, evData):
@@ -87,7 +88,7 @@ class YandexContext(IContext):
         self.yandexData["tracks"] = []
         self.yandexData["playlist"] = playlist = evData.get("playlist")
 
-        self.openWindow("window.yandex.playlist")
+        self.sendEvent2("win.open", name="window.yandex.playlist")
         self.loadPlaylist(playlist)
 
     def downloadFiles(self, evName, evData):

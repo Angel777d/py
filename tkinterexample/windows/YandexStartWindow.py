@@ -1,10 +1,11 @@
-from tkinter import Listbox, TOP, BOTH, END, BOTTOM, X, Canvas, LEFT, SE, CENTER
+from tkinter import Listbox, TOP, BOTH, END, BOTTOM, Canvas, SE, CENTER
 from tkinter.ttk import Label, Button, Entry, Frame
 from typing import List
 
 from yandex_music import Landing, Playlist
 
-from windows.IWindow import IWindow
+from utils.Env import Env
+from windows.IWindow import IWindow, IWindowContainer
 
 
 class PersonalPlaylistWidget(Frame):
@@ -25,8 +26,7 @@ class PersonalPlaylistWidget(Frame):
 
         c.pack()
 
-
-    def setData(self, playlist: Playlist):
+    def doUpdate(self, playlist: Playlist):
         self.playlist = playlist
 
     def onClick(self, ev):
@@ -34,10 +34,11 @@ class PersonalPlaylistWidget(Frame):
 
 
 class YandexStartWindow(IWindow):
-    def __init__(self, env, data=None):
+
+    def __init__(self, env: Env, name: str, parentWindow: IWindowContainer, **kwargs):
         self.playlists: List[Playlist] = []
         self.yandexData = env.data.get("yandex")
-        super().__init__(env, data)
+        super().__init__(env, name, parentWindow, **kwargs)
         self.onLandingLoaded()
 
     def initUI(self):
@@ -101,12 +102,12 @@ class YandexStartWindow(IWindow):
         for entity in block.entities:
             playlist: Playlist = entity.data.data
             widget = PersonalPlaylistWidget(frame)
-            widget.setData(playlist)
+            widget.doUpdate(playlist)
 
     def onClick(self):
         listbox = self.getElement("listbox")
         playlist = [self.playlists[index] for index in listbox.curselection()][0]
-        self.sendEvent("yandex.openPlayList", {"playlist": playlist})
+        self.sendEvent2("yandex.openPlayList", playlist=playlist)
 
     def onSelectionChanged(self, ev):
         listbox = self.getElement("listbox")

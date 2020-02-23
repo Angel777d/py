@@ -4,29 +4,19 @@ from contexts.IContext import IContext
 class StartContext(IContext):
     def __init__(self, env, data=None):
         IContext.__init__(self, env, data=None)
+        self.init()
 
-    def addListeners(self, config):
-        self.addEventListener("context.open", self.onContextOpen)
-        self.addEventListener("context.close", self.onContextClose)
-        self.addEventListener("win.open", self.onWindowOpen)
-        self.addEventListener("win.close", self.onWindowClose)
+    def getListenersConfig(self):
+        return {
+            "app.showConfig": self.onShowConfig,
+        }
 
-        self.addEventListener("app.showConfig", lambda *args: self.sendEvent2("win.open", name="window.config"))
+    def init(self):
+        self.openContext("context.audioPlayer")
+        self.openContext("context.mediaLib")
+        self.openContext("context.yandex.login")
 
-    def removeListeners(self):
-        self.removeEventListener("context.open", self.onContextOpen)
-        self.removeEventListener("context.close", self.onContextClose)
-        self.removeEventListener("win.open", self.onWindowOpen)
-        self.removeEventListener("win.close", self.onWindowClose)
+        self.sendEvent2("win.open", name="window.start")
 
-    def onContextOpen(self, eventName, eventData):
-        self.env.contextManager.openState(eventData["name"], eventData)
-
-    def onContextClose(self, eventName, eventData):
-        self.env.contextManager.closeState(eventData["name"], eventData)
-
-    def onWindowOpen(self, eventName, eventData):
-        self.env.windowsManager.openNext(eventData["name"], eventData)
-
-    def onWindowClose(self, eventName, eventData):
-        self.env.windowsManager.closeTop()
+    def onShowConfig(self, eventName, eventData):
+        self.sendEvent2("win.open", name="window.config")

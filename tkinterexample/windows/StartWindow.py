@@ -1,59 +1,40 @@
-from tkinter import Listbox, TOP, BOTH, END
-from tkinter.ttk import Button
+from tkinter import BOTH, LEFT, Y, X, BOTTOM
+from tkinter.ttk import Frame
 
 from windows.IWindow import IWindow
+from windows.MenuWidget import MenuWidget
+from windows.PlayerWidget import PlayerWidget
 
 
 class StartWindow(IWindow):
-    def addListeners(self, config):
-        self.addEventListener("mediaLib.allTracksLoaded", self.onAllTracksLoaded)
 
-    def removeListeners(self):
-        self.removeEventListener("mediaLib.allTracksLoaded", self.onAllTracksLoaded)
+    def __init__(self, env, name, parentWindow, **kwargs):
+        self.child = ""
+        IWindow.__init__(self, env, name, parentWindow, **kwargs)
+
+    @property
+    def viewContainer(self):
+        return self.getElement("mainFrame")
 
     def initUI(self):
-        button = Button(self, text="Show Yandex", command=self.onStartClick)
-        button.pack()
+        player = PlayerWidget(self.env, self)
+        player.pack(side=BOTTOM, fill=X, expand=False)
 
-        config = Button(self, text="Config", command=lambda: self.sendEvent2("app.showConfig"))
-        config.pack()
+        menu = MenuWidget(self.env, self)
+        menu.pack(side=LEFT, fill=Y, expand=False)
+        menu.onYandex = self.onStartClick
 
-        listbox = Listbox(self)
-        listbox.pack(side=TOP, fill=BOTH, pady=5, expand=True)
+        mainFrame = Frame(self)
+        mainFrame.pack(side=LEFT, fill=BOTH, expand=True)
 
-        play = Button(self, text="Play", command=self.onPlay)
-        play.pack()
+        return {"mainFrame": mainFrame, "player": player}
 
-        stop = Button(self, text="Stop", command=self.onStop)
-        stop.pack()
-
-        return {"listbox": listbox}
+    def onInitialized(self):
+        self.sendEvent2("win.open", name="window.localTracks", parent=self.name)
 
     def onStartClick(self):
-        self.env.eventBus.dispatch("yandex.login")
+        self.sendEvent2("yandex.login")
 
-    def onInitialized(self, data):
-        self.showTracks()
-
-    def onAllTracksLoaded(self, *args):
-        self.showTracks()
-
-    def getTracks(self):
-        return self.env.data.get("mediaLib").get("allTracks", [])
-
-    def showTracks(self):
-        listbox = self.getElement("listbox")
-        listbox.delete(0, END)
-        trackList = self.getTracks()
-        for info in trackList:
-            listbox.insert(END, info.title)
-
-    def onPlay(self):
-        listbox: Listbox = self.getElement("listbox")
-        selection = listbox.curselection()
-        trackList = self.getTracks()
-        if selection:
-            self.sendEvent2("audioPlayer.play", entry=trackList[selection[0]])
-
-    def onStop(self):
-        self.sendEvent("audioPlayer.stop")
+    def addChild(self, windowName, windowInstance):
+        self.closeChildren()
+        IWindow.addChild(self, windowName, windowInstance)
