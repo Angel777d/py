@@ -16,13 +16,13 @@ class AudioPlayerContext(IContext):
             Events.PLAYER_TOGGLE_PAUSE: self.onPause,
         }
 
-    def onPlay(self, eventName, eventData):
-        entry: MediaLibEntry = eventData.get("entry")
+    def onPlay(self, ev):
+        entry: MediaLibEntry = ev.get("entry")
         print("[MediaLib] play track", entry.path)
         self.__player.play(entry.path)
 
-    def onStop(self, eventName, eventData):
+    def onStop(self, ev):
         self.__player.stop()
 
-    def onPause(self, eventName, eventData):
+    def onPause(self, ev):
         self.__player.togglePause()

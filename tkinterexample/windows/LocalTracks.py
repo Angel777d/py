@@ -43,4 +43,4 @@ class LocalTracks(IWindow):
 
         trackList = self.getTracks()
         track: [MediaLibEntry, None] = trackList[selection[0]]
-        self.sendEvent2(Events.PLAYER_PLAY, entry=track)
+        self.sendEvent(Events.PLAYER_PLAY, entry=track)

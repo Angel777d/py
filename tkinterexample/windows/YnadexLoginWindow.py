@@ -7,4 +7,4 @@ class YandexLoginWindow(IWindow):
         SimpleLogin(self, self.onLoginApply, self.goBack)
 
     def onLoginApply(self, login, password):
-        self.sendEvent2("yandex.login.apply", login=login, password=password)
+        self.sendEvent("yandex.login.apply", login=login, password=password)

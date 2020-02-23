@@ -28,11 +28,11 @@ class YandexLoginContext(IContext):
             self.addEventListener("yandex.login", self.starLogin)
             self.addEventListener("yandex.login.apply", self.onLoginApply)
 
-    def starLogin(self, eventName, eventData):
-        self.sendEvent2("win.open", name="window.yandex.login")
+    def starLogin(self, ev):
+        self.sendEvent("win.open", name="window.yandex.login")
 
-    def onLoginApply(self, eventName, eventData):
-        login, password = eventData.get("login"), eventData.get("password")
+    def onLoginApply(self, ev):
+        login, password = ev.get("login"), ev.get("password")
         try:
             token = Client().generate_token_by_username_and_password(login, password)
         except Unauthorized:

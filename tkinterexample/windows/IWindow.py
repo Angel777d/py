@@ -110,7 +110,8 @@ class RootWindow(IWindowContainer, IEventHandler):
             "win.open": self.onWinOpen
         }
 
-    def onWinOpen(self, eventName, eventData):
+    def onWinOpen(self, ev):
+        eventData = ev.data
         windowName = eventData.pop("name")
         parentName = eventData.pop("parent") if "parent" in eventData else None
         self.openWindow(windowName, parentName, **eventData)

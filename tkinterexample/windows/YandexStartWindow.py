@@ -107,7 +107,7 @@ class YandexStartWindow(IWindow):
     def onClick(self):
         listbox = self.getElement("listbox")
         playlist = [self.playlists[index] for index in listbox.curselection()][0]
-        self.sendEvent2("yandex.openPlayList", playlist=playlist)
+        self.sendEvent("yandex.openPlayList", playlist=playlist)
 
     def onSelectionChanged(self, ev):
         listbox = self.getElement("listbox")
@@ -119,4 +119,4 @@ class YandexStartWindow(IWindow):
         search: Entry = self.getElement("search")
         searchStr = search.get()
         print("got search string:", searchStr)
-        self.sendEvent2("yandex.search.request", entry=searchStr)
+        self.sendEvent("yandex.search.request", entry=searchStr)

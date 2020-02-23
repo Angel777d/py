@@ -22,11 +22,11 @@ class StateManager(IEventHandler):
             "context.close": self.onContextClose,
         }
 
-    def onContextOpen(self, eventName, eventData):
-        self.openState(eventData["name"], eventData)
+    def onContextOpen(self, ev):
+        self.openState(ev.get("name"), ev.data)
 
-    def onContextClose(self, eventName, eventData):
-        self.closeState(eventData["name"])
+    def onContextClose(self, ev):
+        self.closeState(ev.get("name"))
 
     def applyConfig(self, config: dict):
         for stateName, stateClass in config.items():

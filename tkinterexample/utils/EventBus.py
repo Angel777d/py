@@ -1,3 +1,15 @@
+class Event:
+    def __init__(self, name, data=None):
+        self.name = name
+        self.data = data
+
+    def get(self, key):
+        return self.data.get(key)
+
+    def __repr__(self):
+        return "%s, data: %s" % (self.name, self.data)
+
+
 class EventBus:
     def __init__(self):
         self.events = {}
@@ -14,10 +26,13 @@ class EventBus:
             callbackList.remove(callback)
 
     def dispatch(self, eventName, eventData=None):
-        callbackList = self.events.setdefault(eventName, [])
-        print("[EventBus] dispatch: %s, callbacks: %d, data: %s" % (eventName, len(callbackList), eventData))
+        self.dispatchEvent(Event(eventName, eventData))
+
+    def dispatchEvent(self, ev):
+        callbackList = self.events.setdefault(ev.name, [])
+        print("[EventBus] dispatch:", ev, len(callbackList))
         for callback in callbackList:
-            callback(eventName, eventData)
+            callback(ev)
 
 
 class IEventHandler:
@@ -55,8 +70,5 @@ class IEventHandler:
     def removeListeners(self):
         pass
 
-    def sendEvent(self, eventName, eventData=None):
-        self.__eventBus.dispatch(eventName, eventData)
-
-    def sendEvent2(self, eventName, **kwargs):
+    def sendEvent(self, eventName, **kwargs):
         self.__eventBus.dispatch(eventName, kwargs)

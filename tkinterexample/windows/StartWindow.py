@@ -30,10 +30,10 @@ class StartWindow(IWindow):
         return {"mainFrame": mainFrame, "player": player}
 
     def onInitialized(self):
-        self.sendEvent2("win.open", name="window.localTracks", parent=self.name)
+        self.sendEvent("win.open", name="window.localTracks", parent=self.name)
 
     def onStartClick(self):
-        self.sendEvent2("yandex.login")
+        self.sendEvent("yandex.login")
 
     def addChild(self, windowName, windowInstance):
         self.closeChildren()

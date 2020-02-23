@@ -18,10 +18,10 @@ class MediaLibContext(IContext):
         self.mediaLibData["allTracks"] = [MediaLibEntry.fromTuple(item) for item in getLibAll(c)]
         conn.close()
         print("[MediaLib] all tracks loaded:", len(self.mediaLibData["allTracks"]))
-        self.sendEvent2("mediaLib.allTracksLoaded")
+        self.sendEvent("mediaLib.allTracksLoaded")
 
-    def onAddTrack(self, eventName, eventData):
-        entry: MediaLibEntry = eventData.get("entry")
+    def onAddTrack(self, ev):
+        entry: MediaLibEntry = ev.get("entry")
         conn = getConnection()
         c = conn.cursor()
         addLibEntry(c, **entry.getProps())

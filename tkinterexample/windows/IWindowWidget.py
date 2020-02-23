@@ -6,4 +6,4 @@ class IWindowWidget:
         self.window: IWindow = window
 
     def sendEvent2(self, eventName, **kwargs):
-        self.window.sendEvent2(eventName, **kwargs)
+        self.window.sendEvent(eventName, **kwargs)

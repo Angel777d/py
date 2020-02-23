@@ -16,7 +16,7 @@ class StartContext(IContext):
         self.openContext("context.mediaLib")
         self.openContext("context.yandex.login")
 
-        self.sendEvent2("win.open", name="window.start")
+        self.sendEvent("win.open", name="window.start")
 
-    def onShowConfig(self, eventName, eventData):
-        self.sendEvent2("win.open", name="window.config")
+    def onShowConfig(self, ev):
+        self.sendEvent("win.open", name="window.config")

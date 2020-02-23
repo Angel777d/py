@@ -11,9 +11,5 @@ class IContext(IState, IEventHandler):
         IEventHandler.close(self)
         IState.close(self)
 
-    def openContext(self, contextName, data=None):
-        eventData = {}
-        if data:
-            eventData.update(data)
-        eventData["name"] = contextName
-        self.sendEvent("context.open", eventData)
+    def openContext(self, contextName, **kwargs):
+        self.sendEvent("context.open", name=contextName, **kwargs)

@@ -29,4 +29,4 @@ class YandexPlaylistWindow(IWindow):
         self.getElement("playlist").doUpdate(tracks)
 
     def download(self, playlistWidget):
-        self.sendEvent2("yandex.download", items=[info for info in playlistWidget.getSelectedItems()])
+        self.sendEvent("yandex.download", items=[info for info in playlistWidget.getSelectedItems()])

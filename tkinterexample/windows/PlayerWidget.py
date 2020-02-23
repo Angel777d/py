@@ -31,13 +31,13 @@ class PlayerWidget(IWidget):
         info = Label(titleFrame, text="Description")
         info.pack(side=TOP)
 
-        playPause = Button(actionFrame, text=">/||", command=lambda: self.sendEvent2(Events.PLAYER_TOGGLE_PAUSE))
+        playPause = Button(actionFrame, text=">/||", command=lambda: self.sendEvent(Events.PLAYER_TOGGLE_PAUSE))
         playPause.pack()
 
         return {"title": title, "info": info}
 
-    def onTrackPlay(self, eventName, eventData):
-        self.showTrack(eventData.get("entry"))
+    def onTrackPlay(self, ev):
+        self.showTrack(ev.get("entry"))
 
     def showTrack(self, track: [MediaLibEntry, None]):
         if track:
