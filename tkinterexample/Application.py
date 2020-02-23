@@ -13,6 +13,7 @@ from windows.WindowStart import WindowStart
 from windows.WindowYandexLanding import WindowYandexLanding
 from windows.WindowYandexPlaylist import WindowYandexPlaylist
 from windows.WindowYandexLogin import WindowYandexLogin
+from windows.WindowYandexSearch import WindowYandexSearch
 
 
 class Application:
@@ -32,6 +33,7 @@ class Application:
             "window.localTracks": (WindowTracksAll, "window.start"),
             "window.yandex.login": (WindowYandexLogin, "window.start"),
             "window.yandex.landing": (WindowYandexLanding, "window.start"),
+            "window.yandex.search": (WindowYandexSearch, "window.start"),
             "window.yandex.playlist": (WindowYandexPlaylist, "window.start"),
         })
 

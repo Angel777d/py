@@ -71,7 +71,7 @@ class YandexContext(IContext):
         def doLoad():
             result = client.search(entry)
             self.yandexData["search"] = result
-            self.sendEvent("yandex.search.done")
+            self.sendEvent("yandex.search.dataChanged")
             print("search done", result)
 
         thread = SimpleThread(doLoad, name="LoadPlaylist")

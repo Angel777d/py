@@ -121,6 +121,7 @@ class RootWindow(IWindowContainer, IEventHandler):
         windowConfig = self.config.get(windowName)
         if not windowConfig:
             print("[RootWindow] can't find config for window:", windowName)
+            return
 
         windowClass, defaultParent = windowConfig
         parentName = parentName if parentName else defaultParent

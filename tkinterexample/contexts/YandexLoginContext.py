@@ -48,4 +48,5 @@ class YandexLoginContext(IContext):
 
     def onClientReady(self, client):
         self.yandexData["client"] = client
+        self.openContext("yandex.client.dataChanged")
         self.openContext("context.yandex.start")

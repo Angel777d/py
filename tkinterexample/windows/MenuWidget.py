@@ -1,37 +1,60 @@
-from tkinter import TOP
-from tkinter.ttk import Button
+from tkinter import TOP, X, BOTTOM
+from tkinter.ttk import Button, Frame
 
 from model import Events
-from windows.widgets.CaptionEntryWidget import CaptionEntry
 from windows.IWindow import IWidget
+from windows.widgets.CaptionEntryWidget import CaptionEntry
 
 
 class MenuWidget(IWidget):
+    def getListenersConfig(self):
+        return {"yandex.client.dataChanged": self.onYandexLogin}
 
     def initUI(self):
-        home = Button(self, text="Home", command=lambda: self.sendEvent(Events.WINDOW_OPEN, name="window.localTracks"))
-        home.pack(side=TOP)
+        frame = Frame(self)
+        home = Button(frame, text="Home", command=lambda: self.sendEvent(Events.WINDOW_OPEN, name="window.localTracks"))
 
-        yandexLogin = Button(self, text="Yandex Login", command=lambda: self.sendEvent("yandex.login"))
-        yandexLogin.pack(side=TOP)
+        home.pack(side=TOP, fill=X)
+        frame.pack(side=TOP, fill=X, pady=20)
 
-        yandexShow = Button(self, text="Yandex", command=lambda: self.sendEvent("yandex.start"))
-        yandexShow.pack(side=TOP)
+        frame = Frame(self)
+        yandexLogin = Button(frame, text="Yandex Login", command=lambda: self.sendEvent("yandex.login"))
+        yandexShow = Button(frame, text="Yandex Home", command=lambda: self.sendEvent("yandex.start"))
+        yandexSearch = CaptionEntry(frame, "Yandex Search")
+        yandexSearch.bind('<Return>', self.onSearch)
 
-        config = Button(self, text="Config", command=lambda: self.sendEvent("app.showConfig"))
-        config.pack(side=TOP)
+        yandexLogin.pack(side=TOP, fill=X, pady=2)
+        yandexShow.pack(side=TOP, fill=X, pady=2)
+        yandexSearch.pack(side=TOP, fill=X, pady=2)
+        frame.pack(side=TOP, fill=X, pady=10)
 
-        search = CaptionEntry(self, "Yandex Search")
-        search.bind('<Return>', self.onSearch)
-        search.pack()
+        frame = Frame(self)
+        config = Button(frame, text="Config", command=lambda: self.sendEvent("app.showConfig"))
+        config.pack(side=TOP, fill=X)
+        frame.pack(side=BOTTOM, fill=X)
 
-        return {"search": search}
+        return {"yandexSearch": yandexSearch, "yandexLogin": yandexLogin, "yandexShow": yandexShow}
 
     def onSearch(self, ev):
-        search: CaptionEntry = self.getElement("search")
-        searchStr = search.get()
+        search: CaptionEntry = self.getElement("yandexSearch")
+        searchStr = search.getValue()
         print("got search string:", searchStr)
         self.sendEvent("yandex.request.search", entry=searchStr)
-        self.sendEvent("yandex.request.search", entry=searchStr)
+        self.sendEvent(Events.WINDOW_OPEN, name="window.yandex.search")
 
-        return {}
+    def onInitialized(self):
+        self.updateYandex()
+
+    def onYandexLogin(self, ev):
+        self.updateYandex()
+
+    def updateYandex(self):
+        isYandexReady = self.env.data.get("yandex").get("client")
+        if isYandexReady:
+            self.getElement("yandexSearch").pack(side=TOP, fill=X, pady=2)
+            self.getElement("yandexShow").pack(side=TOP, fill=X, pady=2)
+            self.getElement("yandexLogin").pack_forget()
+        else:
+            self.getElement("yandexSearch").pack_forget()
+            self.getElement("yandexShow").pack_forget()
+            self.getElement("yandexLogin").pack(side=TOP, fill=X, pady=2)
