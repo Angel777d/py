@@ -6,7 +6,7 @@ from utils.Utils import emptyHandler
 from windows.IWindow import IWindow
 
 
-class YandexLoadingWindow(IWindow):
+class WindowYandexLoading(IWindow):
 
     def __init__(self, env, data=None):
         super().__init__(env, data)

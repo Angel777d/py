@@ -6,13 +6,13 @@ from contexts.YandexLoginContext import YandexLoginContext
 from utils import MediaKeysListener
 from utils.Env import Env
 from utils.StateManager import StateManager
-from windows.ConfigWindow import ConfigWindow
+from windows.WindowConfig import WindowConfig
 from windows.IWindow import RootWindow
-from windows.AllTracksWindow import AllTracksWindow
-from windows.StartWindow import StartWindow
-from windows.YandexLandingWindow import YandexLandingWindow
-from windows.YandexPlaylistWindow import YandexPlaylistWindow
-from windows.YnadexLoginWindow import YandexLoginWindow
+from windows.WindowTracksAll import WindowTracksAll
+from windows.WindowStart import WindowStart
+from windows.WindowYandexLanding import WindowYandexLanding
+from windows.WindowYandexPlaylist import WindowYandexPlaylist
+from windows.WindowYandexLogin import WindowYandexLogin
 
 
 class Application:
@@ -27,12 +27,12 @@ class Application:
         self.env.root = root
 
         self.env.rootWindow = RootWindow(self.env, {
-            "window.start": (StartWindow, "root"),
-            "window.config": (ConfigWindow, "window.start"),
-            "window.localTracks": (AllTracksWindow, "window.start"),
-            "window.yandex.login": (YandexLoginWindow, "window.start"),
-            "window.yandex.landing": (YandexLandingWindow, "window.start"),
-            "window.yandex.playlist": (YandexPlaylistWindow, "window.start"),
+            "window.start": (WindowStart, "root"),
+            "window.config": (WindowConfig, "window.start"),
+            "window.localTracks": (WindowTracksAll, "window.start"),
+            "window.yandex.login": (WindowYandexLogin, "window.start"),
+            "window.yandex.landing": (WindowYandexLanding, "window.start"),
+            "window.yandex.playlist": (WindowYandexPlaylist, "window.start"),
         })
 
         self.env.contextManager = StateManager(self.env).applyConfig({

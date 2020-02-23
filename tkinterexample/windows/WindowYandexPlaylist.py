@@ -7,7 +7,7 @@ from yandex_music import Track
 from windows.IWindow import IWindow
 
 
-class YandexPlaylistWindow(IWindow):
+class WindowYandexPlaylist(IWindow):
     def initUI(self):
         button = Button(self, text="Download", command=self.download)
         button.pack(side=BOTTOM)

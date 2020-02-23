@@ -32,7 +32,7 @@ from windows.IWindow import IWindow
 #         pass
 
 
-class YandexLandingWindow(IWindow):
+class WindowYandexLanding(IWindow):
 
     def initUI(self):
         label = Label(self, text="Landing")

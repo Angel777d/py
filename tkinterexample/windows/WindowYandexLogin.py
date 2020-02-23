@@ -2,7 +2,7 @@ from windows.IWindow import IWindow
 from windows.SimpleLoginWidget import SimpleLogin
 
 
-class YandexLoginWindow(IWindow):
+class WindowYandexLogin(IWindow):
     def initUI(self):
         SimpleLogin(self, self.onLoginApply, self.close)
 

@@ -6,7 +6,7 @@ from utils.Env import ConfigProps
 from windows.IWindow import IWindow
 
 
-class ConfigWindow(IWindow):
+class WindowConfig(IWindow):
 
     def initUI(self):
         frame = Frame(self)

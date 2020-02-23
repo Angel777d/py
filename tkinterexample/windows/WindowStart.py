@@ -7,7 +7,7 @@ from windows.MenuWidget import MenuWidget
 from windows.PlayerWidget import PlayerWidget
 
 
-class StartWindow(IWindow):
+class WindowStart(IWindow):
 
     def __init__(self, env, name, parentWindow, **kwargs):
         self.child = ""
