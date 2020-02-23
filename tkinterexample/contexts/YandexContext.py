@@ -93,7 +93,11 @@ class YandexContext(IContext):
     def downloadFiles(self, ev):
         items = ev.get("items")
         for info in items:
-            path = Path(self.env.config.get(ConfigProps.LIBRARY_PATH), info.filename)
+            path = Path(self.env.config.get(ConfigProps.LIBRARY_PATH), info.folder)
+            import os
+            os.makedirs(path, exist_ok=True)
+            path.mkdir(parents=True, exist_ok=True)
+            path = path.joinpath(info.filename)
             if not path.exists():
                 print("[Yandex] start download:", path)
                 info.entry.track.download(path)
