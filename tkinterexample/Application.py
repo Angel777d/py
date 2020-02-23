@@ -1,3 +1,7 @@
+from tkinter.tix import Label, Frame
+
+from PIL import ImageTk, Image
+
 from contexts.AudioPlayerContext import AudioPlayerContext
 from contexts.MediaLibContext import MediaLibContext
 from contexts.StartContext import StartContext
@@ -48,5 +52,12 @@ class Application:
 		MediaKeysListener.setup({"media_play_pause": lambda: print("handlePlay")})
 
 	def start(self):
+		# frame = Frame(self.env.root)
+		# frame.pack()
+		#
+		# img = ImageTk.PhotoImage(Image.open("D:/123.jpg"))
+		# label = Label(frame, image=img)
+		# label.pack()
+
 		self.env.contextManager.openState("context.start")
 		self.env.root.mainloop()
