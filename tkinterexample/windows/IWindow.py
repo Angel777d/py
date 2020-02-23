@@ -2,6 +2,7 @@ from tkinter import BOTH
 from tkinter.ttk import Frame
 from typing import Dict
 
+from model import Events
 from utils.Env import Env
 from utils.EventBus import IEventHandler
 
@@ -50,9 +51,14 @@ class IContainer:
 
 class IWidget(IEventHandler, Frame):
     def __init__(self, env, parent, **kwargs):
+        self.env: Env = env
         IEventHandler.__init__(self, env.eventBus)
         Frame.__init__(self, parent, **kwargs)
         self.elements = self.initUI()
+        self.onInitialized()
+
+    def onInitialized(self):
+        pass
 
     def close(self):
         self.destroy()
@@ -74,17 +80,12 @@ class IWindowContainer(IContainer):
 
 class IWindow(IWidget, IWindowContainer):
     def __init__(self, env: Env, name: str, parentWindow: IWindowContainer, **kwargs):
-        self.env: Env = env
         IWindowContainer.__init__(self, name, parentWindow)
         IWidget.__init__(self, env, parentWindow.viewContainer, **kwargs)
         self.packUI()
-        self.onInitialized()
 
     def packUI(self):
         self.pack(fill=BOTH, expand=True)
-
-    def onInitialized(self):
-        pass
 
     def setData(self, data):
         pass
@@ -107,7 +108,7 @@ class RootWindow(IWindowContainer, IEventHandler):
 
     def getListenersConfig(self):
         return {
-            "win.open": self.onWinOpen
+            Events.WINDOW_OPEN: self.onWinOpen
         }
 
     def onWinOpen(self, ev):

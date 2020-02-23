@@ -3,8 +3,8 @@
 from tkinter import BOTH, X, TOP
 from tkinter.ttk import Frame
 
-from windows.CaptionEntryWidget import CaptionEntry
-from windows.SimpleButtons import SimpleButtons
+from windows.widgets.CaptionEntryWidget import CaptionEntry
+from windows.widgets.SimpleButtons import SimpleButtons
 
 
 class SimpleLogin(Frame):

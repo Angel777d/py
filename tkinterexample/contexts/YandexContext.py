@@ -3,6 +3,7 @@ from pathlib import Path
 from yandex_music import Client
 
 from contexts.IContext import IContext
+from model import Events
 from model.MediaLibEntry import MediaLibEntry
 from utils.Env import ConfigProps
 from utils.SimpleThread import SimpleThread
@@ -40,14 +41,14 @@ class YandexContext(IContext):
         return {
             "yandex.download": self.downloadFiles,
             "yandex.start": self.onStart,
-            "yandex.openPlayList": self.openPlayList,
-            "yandex.search": self.onSearch,
+            "yandex.request.playlist": self.openPlayList,
+            "yandex.request.search": self.onSearch,
         }
 
     def loadLanding(self):
         def doLoad():
             self.yandexData["landing"] = self.client.landing(LANDING_PRIMARY + LANDING_PLAYLISTS)
-            self.sendEvent("yandex.landingLoaded")
+            self.sendEvent("yandex.landing.dataChanged")
 
         thread = SimpleThread(doLoad, name="LoadLanding")
         thread.start()
@@ -58,7 +59,7 @@ class YandexContext(IContext):
         def doLoad():
             tracks = client.users_playlists(kind=playlist.kind, user_id=playlist.uid)[0].tracks
             self.yandexData["tracks"] = LocalTrackList.getTracks(tracks)
-            self.sendEvent("yandex.tracksLoaded")
+            self.sendEvent("yandex.tracks.dataChanged")
 
         thread = SimpleThread(doLoad, name="LoadPlaylist")
         thread.start()
@@ -77,18 +78,16 @@ class YandexContext(IContext):
         thread.start()
 
     def onStart(self, ev):
-        self.sendEvent("win.open", name="window.yandex.start")
         self.loadLanding()
+        self.sendEvent(Events.WINDOW_OPEN, name="window.yandex.landing")
 
     def onSearch(self, ev):
         entry = ev.get("entry")
         self.doSearch(entry)
 
     def openPlayList(self, ev):
-        self.yandexData["tracks"] = []
         self.yandexData["playlist"] = playlist = ev.get("playlist")
-
-        self.sendEvent("win.open", name="window.yandex.playlist")
+        self.yandexData["tracks"] = []
         self.loadPlaylist(playlist)
 
     def downloadFiles(self, ev):

@@ -1,4 +1,5 @@
 from contexts.IContext import IContext
+from model import Events
 
 
 class StartContext(IContext):
@@ -16,7 +17,7 @@ class StartContext(IContext):
         self.openContext("context.mediaLib")
         self.openContext("context.yandex.login")
 
-        self.sendEvent("win.open", name="window.start")
+        self.sendEvent(Events.WINDOW_OPEN, name="window.start")
 
     def onShowConfig(self, ev):
-        self.sendEvent("win.open", name="window.config")
+        self.sendEvent(Events.WINDOW_OPEN, name="window.config")

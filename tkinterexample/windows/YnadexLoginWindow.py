@@ -4,7 +4,7 @@ from windows.SimpleLoginWidget import SimpleLogin
 
 class YandexLoginWindow(IWindow):
     def initUI(self):
-        SimpleLogin(self, self.onLoginApply, self.goBack)
+        SimpleLogin(self, self.onLoginApply, self.close)
 
     def onLoginApply(self, login, password):
         self.sendEvent("yandex.login.apply", login=login, password=password)

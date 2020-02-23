@@ -30,7 +30,7 @@ class EventBus:
 
     def dispatchEvent(self, ev):
         callbackList = self.events.setdefault(ev.name, [])
-        print("[EventBus] dispatch:", ev, len(callbackList))
+        print("[EventBus] dispatch:", len(callbackList), ev)
         for callback in callbackList:
             callback(ev)
 

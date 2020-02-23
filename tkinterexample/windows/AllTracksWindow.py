@@ -5,7 +5,7 @@ from model.MediaLibEntry import MediaLibEntry
 from windows.IWindow import IWindow
 
 
-class LocalTracks(IWindow):
+class AllTracksWindow(IWindow):
 
     def getListenersConfig(self):
         return {

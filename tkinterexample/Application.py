@@ -8,11 +8,10 @@ from utils.Env import Env
 from utils.StateManager import StateManager
 from windows.ConfigWindow import ConfigWindow
 from windows.IWindow import RootWindow
-from windows.LocalTracks import LocalTracks
+from windows.AllTracksWindow import AllTracksWindow
 from windows.StartWindow import StartWindow
-from windows.YandexLoadingWindow import YandexLoadingWindow
+from windows.YandexLandingWindow import YandexLandingWindow
 from windows.YandexPlaylistWindow import YandexPlaylistWindow
-from windows.YandexStartWindow import YandexStartWindow
 from windows.YnadexLoginWindow import YandexLoginWindow
 
 
@@ -30,11 +29,10 @@ class Application:
         self.env.rootWindow = RootWindow(self.env, {
             "window.start": (StartWindow, "root"),
             "window.config": (ConfigWindow, "window.start"),
-            "window.localTracks": (LocalTracks, "window.start"),
+            "window.localTracks": (AllTracksWindow, "window.start"),
             "window.yandex.login": (YandexLoginWindow, "window.start"),
-            "window.yandex.start": (YandexStartWindow, "window.start"),
-            "window.yandex.loading": (YandexLoadingWindow, "window.yandex.start"),
-            "window.yandex.playlist": (YandexPlaylistWindow, "window.yandex.start"),
+            "window.yandex.landing": (YandexLandingWindow, "window.start"),
+            "window.yandex.playlist": (YandexPlaylistWindow, "window.start"),
         })
 
         self.env.contextManager = StateManager(self.env).applyConfig({

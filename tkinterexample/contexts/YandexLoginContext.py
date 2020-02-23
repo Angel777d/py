@@ -2,6 +2,7 @@ from yandex_music import Client
 from yandex_music.exceptions import Unauthorized
 
 from contexts.IContext import IContext
+from model import Events
 from utils import Defaults
 from utils.Utils import readFile, writeFile
 
@@ -29,7 +30,7 @@ class YandexLoginContext(IContext):
             self.addEventListener("yandex.login.apply", self.onLoginApply)
 
     def starLogin(self, ev):
-        self.sendEvent("win.open", name="window.yandex.login")
+        self.sendEvent(Events.WINDOW_OPEN, name="window.yandex.login")
 
     def onLoginApply(self, ev):
         login, password = ev.get("login"), ev.get("password")
