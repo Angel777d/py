@@ -42,30 +42,28 @@ class YandexContext(IContext):
 		return {
 			"yandex.download": self.downloadFiles,
 			"yandex.start": self.onStart,
-			"yandex.request.playlist": self.openPlayList,
-			"yandex.request.search": self.onSearch,
+			"yandex.request.search": self.requestSearch,
+			"yandex.request.playlist": self.requestPlaylist,
+			"yandex.request.album": self.requestAlbum,
+			"yandex.request.artist": self.requestArtist,
 		}
 
-	def loadLanding(self):
-		def doLoad():
-			self.yandexData["landing"] = self.client.landing(LANDING_PRIMARY + LANDING_PLAYLISTS)
-			self.sendEvent("yandex.landing.dataChanged")
+	def onStart(self, ev):
+		self.requestLanding()
+		self.sendEvent(Events.WINDOW_OPEN, name="window.yandex.landing")
 
-		thread = SimpleThread(doLoad, name="LoadLanding")
-		thread.start()
-
-	def loadPlaylist(self, playlist):
+	def requestLanding(self):
 		client = self.client
 
 		def doLoad():
-			tracks = client.users_playlists(kind=playlist.kind, user_id=playlist.uid)[0].tracks
-			self.yandexData["tracks"] = LocalTrackList.getTracks(tracks)
-			self.sendEvent("yandex.tracks.dataChanged")
+			self.yandexData["landing"] = client.landing(LANDING_PRIMARY + LANDING_PLAYLISTS)
+			self.sendEvent("yandex.landing.dataChanged")
 
-		thread = SimpleThread(doLoad, name="LoadPlaylist")
+		thread = SimpleThread(doLoad, name="RequestLanding")
 		thread.start()
 
-	def doSearch(self, entry):
+	def requestSearch(self, ev):
+		entry = ev.get("entry")
 		client = self.client
 		print("start search:", entry)
 
@@ -78,18 +76,37 @@ class YandexContext(IContext):
 		thread = SimpleThread(doLoad, name="LoadPlaylist")
 		thread.start()
 
-	def onStart(self, ev):
-		self.loadLanding()
-		self.sendEvent(Events.WINDOW_OPEN, name="window.yandex.landing")
+	def requestArtist(self, ev):
+		client = self.client
+		yd = self.yandexData
+		artist = ev.get("artist")
+		yd["artist"] = artist
 
-	def onSearch(self, ev):
-		entry = ev.get("entry")
-		self.doSearch(entry)
+		def doLoad():
+			yd["artist"] = client.artists([artist.id])[0]
+			yd["artist_brief"] = client.artists_brief_info(artist.id)
+			yd["artist_albums"] = client.artists_direct_albums(artist.id)
+			yd["artist_tracks"] = client.artists_tracks(artist.id)
+			self.sendEvent("yandex.artist.dataChanged")
+			print("got artist info")
 
-	def openPlayList(self, ev):
+		SimpleThread(doLoad, name="RequestArtist").start()
+
+	def requestAlbum(self, ev):
+		self.yandexData["album"] = album = ev.get("album")
+		self.sendEvent("yandex.album.dataChanged")
+
+	def requestPlaylist(self, ev):
 		self.yandexData["playlist"] = playlist = ev.get("playlist")
-		self.yandexData["tracks"] = []
-		self.loadPlaylist(playlist)
+		self.yandexData.setdefault("tracks", [])
+		client = self.client
+
+		def doLoad():
+			tracks = client.users_playlists(kind=playlist.kind, user_id=playlist.uid)[0].tracks
+			self.yandexData["tracks"] = LocalTrackList.getTracks(tracks)
+			self.sendEvent("yandex.tracks.dataChanged")
+
+		SimpleThread(doLoad, name="LoadPlaylist").start()
 
 	def downloadFiles(self, ev):
 		items = ev.get("items")
@@ -98,9 +115,12 @@ class YandexContext(IContext):
 			path.mkdir(parents=True, exist_ok=True)
 			path = path.joinpath(info.filename)
 			if not path.exists():
-				print("[Yandex] start download:", path)
-				info.entry.track.download(path)
-				print("[Yandex] downloaded:", path)
+				def doDownload():
+					print("[Yandex] start download:", path)
+					info.entry.track.download(path)
+					print("[Yandex] downloaded:", path)
+
+				SimpleThread(doDownload).start()
 
 			libEntry = MediaLibEntry(path.as_posix(), info.title, info.artist, info.album)
 			self.sendEvent("mediaLib.add.track", entry=libEntry)

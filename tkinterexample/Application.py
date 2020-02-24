@@ -14,6 +14,8 @@ from windows.IWindow import RootWindow
 from windows.WindowConfig import WindowConfig
 from windows.WindowStart import WindowStart
 from windows.WindowTracksAll import WindowTracksAll
+from windows.WindowYandexAlbum import WindowYandexAlbum
+from windows.WindowYandexArtist import WindowYandexArtist
 from windows.WindowYandexLanding import WindowYandexLanding
 from windows.WindowYandexLogin import WindowYandexLogin
 from windows.WindowYandexPlaylist import WindowYandexPlaylist
@@ -39,6 +41,8 @@ class Application:
 			"window.yandex.landing": (WindowYandexLanding, "window.start"),
 			"window.yandex.search": (WindowYandexSearch, "window.start"),
 			"window.yandex.playlist": (WindowYandexPlaylist, "window.start"),
+			"window.yandex.album": (WindowYandexAlbum, "window.start"),
+			"window.yandex.artist": (WindowYandexArtist, "window.start"),
 		})
 
 		self.env.contextManager = StateManager(self.env).applyConfig({

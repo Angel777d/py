@@ -1,97 +1,24 @@
-from tkinter import LEFT, TOP, Canvas, SE, CENTER, NW, X
+from tkinter import LEFT, TOP, X, BOTH, TRUE
 from tkinter.tix import Label, Frame
+from typing import ClassVar
 
-from PIL import ImageTk, Image
-from yandex_music import Artist, Track, Search, SearchResult, Album
+from yandex_music import Search, SearchResult
 
-from utils.Defaults import APP_PATH
-from utils.SimpleThread import SimpleThread
+from model import Events
 from windows.IWindow import IWindow
-
-SIZE = 200
-
-
-def getArtistCover(artist: Artist):
-	return artist.cover.download if artist.cover else None, "artist_%s.jpg" % artist.id
+from windows.widgets.VerticalScrollFrame import VerticalScrolledFrame
+from windows.widgets.YandexTilesWidgets import ArtistWidget, AlbumWidget, TrackWidget, PlaylistWidget
 
 
-def getAlbumCover(album: Album):
-	if album.cover_uri:
-		return album.download_cover, "album_%s.jpg" % album.id
-	return getArtistCover(album.artists[0])
+class SearchResultFrame(Frame):
+	def initUI(self, widgetClass: ClassVar, search: SearchResult, title: str, callback):
+		label = Label(self, text=title)
+		label.pack(side=TOP)
+		for index in range(min(search.total, search.per_page, 4)):
+			item = search.results[index]
+			widgetClass(self, callback).show(item)
 
-
-def getTrackCover(track: Track):
-	if track.cover_uri:
-		return track.download_cover, "track_%s.jpg" % track.trackId
-	return getAlbumCover(track.albums[0])
-
-
-class ArtistWidget(Frame):
-	def __init__(self, master=None, **kw):
-		super().__init__(master, **kw)
-		self.img = None
-		self.pack(side=LEFT)
-
-	def show(self, artist: Artist):
-		download_cover, fileName = getArtistCover(artist)
-		path = APP_PATH.joinpath("cover").joinpath(fileName)
-		if download_cover and not path.exists():
-			path.parent.mkdir(parents=True, exist_ok=True)
-			print("download artist cover:", path)
-			SimpleThread(lambda: download_cover(path), lambda _: self.show(artist)).start()
-			return
-
-		c = Canvas(self, width=SIZE, height=SIZE, bg='white')
-		if download_cover:
-			self.img = ImageTk.PhotoImage(Image.open(path.as_posix()))
-			c.create_image((SIZE / 2, SIZE / 2), image=self.img)
-		else:
-			c.create_rectangle(0, 0, SIZE, SIZE, fill='gray', width=0)
-
-		# c.create_text(SIZE / 2, SIZE / 2, text="Playlist Name", justify=CENTER)  # , font="Verdana 14")
-		c.create_text(SIZE, SIZE, text=artist.name, anchor=SE, fill="#FF00FF")
-		c.bind("<Button-1>", self.onClick)
-		c.pack()
-
-	def onClick(self, ev):
-		print("Artist click")
-
-
-class TrackWidget(Frame):
-	def __init__(self, master=None, **kw):
-		super().__init__(master, **kw)
-		self.img = None
-		self.pack(side=LEFT)
-
-	def show(self, track: Track):
-		download_cover, fileName = getTrackCover(track)
-		path = APP_PATH.joinpath("cover").joinpath(fileName)
-		if download_cover and not path.exists():
-			path.parent.mkdir(parents=True, exist_ok=True)
-			print("download track cover:", path)
-			SimpleThread(lambda: download_cover(path), lambda _: self.show(track)).start()
-			return
-
-		c = Canvas(self, width=SIZE, height=SIZE, bg='white')
-		if download_cover:
-			self.img = ImageTk.PhotoImage(Image.open(path.as_posix()))
-			c.create_image((SIZE / 2, SIZE / 2), image=self.img)
-		else:
-			c.create_rectangle(0, 0, SIZE, SIZE, fill='gray', width=0)
-
-		c.create_text(0, 0, text=track.albums[0].title, anchor=NW, fill="#FF00FF")
-		c.create_text(SIZE / 2, SIZE / 2, text=track.title, justify=CENTER, fill="#FF00FF")  # , font="Verdana 14")
-		c.create_text(SIZE, SIZE, text=track.artists[0].name, anchor=SE, fill="#FF00FF")
-		c.bind("<Button-1>", self.onClick)
-		c.pack()
-
-	def onClick(self, ev):
-		print("Track click")
-
-
-def onClick(self, ev):
-	print("Track click")
+		self.pack(side=TOP, pady=5, fill=X)
 
 
 class WindowYandexSearch(IWindow):
@@ -120,28 +47,36 @@ class WindowYandexSearch(IWindow):
 		for child in children:
 			child.destroy()
 
-		frame = Frame(self)
-		if search.best.type == "artist":
-			ArtistWidget(frame).show(search.best.result)
-		elif search.best.type == "track":
-			TrackWidget(frame).show(search.best.result)
-		frame.pack(side=TOP, pady=5, fill=X)
+		scrollFrame = VerticalScrolledFrame(self)
+		scrollFrame.pack(side=LEFT, fill=BOTH, expand=TRUE)
 
-		artists: SearchResult = search.artists
-		frame = Frame(self)
-		label = Label(frame, text="Artist")
-		label.pack(side=TOP)
-		for index in range(min(artists.total, artists.per_page, 4)):
-			ArtistWidget(frame).show(artists.results[index])
-		frame.pack(side=TOP, pady=5, fill=X)
+		best = search.best.type
+		order = ["artist", "track", "album", "playlist"]
+		data = {
+			"artist": (ArtistWidget, search.artists, "Artist", self.showArtist),
+			"track": (TrackWidget, search.tracks, "Tracks", self.showTrack),
+			"album": (AlbumWidget, search.albums, "Albums", self.showAlbum),
+			"playlist": (PlaylistWidget, search.playlists, "Playlists", self.showPlaylist),
+		}
 
-		tracks: SearchResult = search.tracks
-		frame = Frame(self)
-		label = Label(frame, text="Tracks")
-		label.pack(side=TOP)
-		for index in range(min(tracks.total, tracks.per_page, 4)):
-			TrackWidget(frame).show(tracks.results[index])
-		frame.pack(side=TOP, pady=5, fill=X)
+		SearchResultFrame(scrollFrame).initUI(*data[best])
+		for resultType in [t for t in order if t != best]:
+			SearchResultFrame(scrollFrame).initUI(*data[resultType])
+
+	def showPlaylist(self, playlist):
+		self.sendEvent("yandex.request.playlist", playlist=playlist)
+		self.sendEvent(Events.WINDOW_OPEN, name="window.yandex.playlist")
+
+	def showArtist(self, artist):
+		self.sendEvent("yandex.request.artist", artist=artist)
+		self.sendEvent(Events.WINDOW_OPEN, name="window.yandex.artist")
+
+	def showAlbum(self, album):
+		self.sendEvent("yandex.request.album", album=album)
+		self.sendEvent(Events.WINDOW_OPEN, name="window.yandex.album")
+
+	def showTrack(self, track):
+		self.sendEvent("yandex.download", items=[track])
 
 	@property
 	def searchResult(self):
