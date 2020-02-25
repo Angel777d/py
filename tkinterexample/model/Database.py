@@ -44,7 +44,7 @@ def createLibTable(conn):
 
 
 def addLibEntry(c, path, title, artist, album):
-	c.execute('INSERT INTO tracks_lib VALUES (?, ?, ?, ?)', (path, title, artist, album))
+	c.execute('INSERT or IGNORE INTO tracks_lib VALUES (?, ?, ?, ?)', (path, title, artist, album))
 	return path, title, artist, album
 
 

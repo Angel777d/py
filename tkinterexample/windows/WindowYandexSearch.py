@@ -79,7 +79,7 @@ class WindowYandexSearch(IWindow):
 		self.sendEvent(Events.WINDOW_OPEN, name="window.yandex.album")
 
 	def showTrack(self, track):
-		self.sendEvent("yandex.download", items=[track])
+		self.sendEvent("yandex.download", items=[track.track_id])
 
 	@property
 	def searchResult(self):

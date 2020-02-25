@@ -1,3 +1,4 @@
+import time
 from pathlib import Path
 
 from yandex_music import Client
@@ -8,6 +9,7 @@ from model.MediaLibEntry import MediaLibEntry
 from utils.Env import ConfigProps
 from utils.SimpleThread import SimpleThread
 from yandex import LocalTrackList
+from yandex.Extentions import folder, filename, trackSimpleData
 
 LANDING_PRIMARY = ["personal-playlists"]
 
@@ -119,17 +121,21 @@ class YandexContext(IContext):
 
 	def downloadFiles(self, ev):
 		items = ev.get("items")
-		for info in items:
-			path = Path(self.env.config.get(ConfigProps.LIBRARY_PATH), info.folder)
+		client = self.client
+		tracks = client.tracks(items)
+		for track in tracks:
+			path = Path(self.env.config.get(ConfigProps.LIBRARY_PATH), folder(track))
 			path.mkdir(parents=True, exist_ok=True)
-			path = path.joinpath(info.filename)
-			if not path.exists():
-				def doDownload():
-					print("[YandexContext] start download:", path)
-					info.entry.track.download(path)
-					print("[YandexContext] downloaded:", path)
-
-				SimpleThread(doDownload).start()
-
-			libEntry = MediaLibEntry(path.as_posix(), info.title, info.artist, info.album)
+			path = path.joinpath(filename(track))
+			self.__download(path, track)
+			libEntry = MediaLibEntry(path.as_posix(), *trackSimpleData(track))
 			self.sendEvent("mediaLib.add.track", entry=libEntry)
+
+	def __download(self, path, track):
+		if not path.exists():
+			def doDownload():
+				print("[YandexContext] start download:", path)
+				track.download(path)
+				print("[YandexContext] downloaded:", path)
+
+			SimpleThread(doDownload).start()

@@ -1,5 +1,27 @@
 from yandex_music import Artist, Album, Track, Playlist
 
+_EXCLUDED = ":/?|;."
+
+
+def trackSimpleData(track: Track):
+	artist = "".join([c for c in track.artists[0].name if track.artists and c not in _EXCLUDED])
+	album = "".join([c for c in track.albums[0].title if track.albums and c not in _EXCLUDED])
+	title = track.title
+	return title, album, artist
+
+
+def folder(track: Track):
+	title, album, artist = trackSimpleData(track)
+
+	if album:
+		return "%s/%s" % (artist, album)
+	return artist
+
+
+def filename(track: Track):
+	title = "".join([c for c in track.title if c not in _EXCLUDED])
+	return "%s.mp3" % title
+
 
 def getArtistCover(artist: Artist):
 	if artist.cover:

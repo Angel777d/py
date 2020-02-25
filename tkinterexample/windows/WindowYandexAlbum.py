@@ -1,7 +1,7 @@
-from tkinter import TOP, X
-from tkinter.ttk import Label, Frame
+from tkinter import TOP, X, BOTTOM
+from tkinter.ttk import Label, Frame, Button
 
-from yandex_music import Album
+from yandex_music import Album, Track
 
 from utils.Utils import clearItem
 from windows.IWindow import IWindow
@@ -20,6 +20,8 @@ class WindowYandexAlbum(IWindow):
 		tracks = TrackListWidget(self.env, self)
 		tracks.pack(side=TOP, fill=X)
 
+		button = Button(self, text="Download", command=self.onDownload)
+		button.pack(side=BOTTOM)
 		return {"label": label, "info": info, "tracks": tracks}
 
 	def getListenersConfig(self):
@@ -29,7 +31,7 @@ class WindowYandexAlbum(IWindow):
 		self.onAlbumChanged()
 
 	def onAlbumChanged(self, *args):
-		album:Album = self.env.data.get("yandex").get("album")
+		album: Album = self.env.data.get("yandex").get("album")
 		# artist_brief = self.env.data.get("yandex").get("artist_brief")
 		# artist_albums = self.env.data.get("yandex").get("artist_albums")
 		# artist_tracks = self.env.data.get("yandex").get("artist_tracks")
@@ -41,3 +43,9 @@ class WindowYandexAlbum(IWindow):
 		if album.volumes:
 			tracks = self.getElement("tracks")
 			tracks.doUpdate(sum(album.volumes, []))
+
+	def onDownload(self, *args):
+		album: Album = self.env.data.get("yandex").get("album")
+		if album.volumes:
+			items = sum(album.volumes, [])
+			self.sendEvent("yandex.download", items=[item.track_id for item in items])

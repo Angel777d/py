@@ -31,7 +31,7 @@ class WindowYandexPlaylist(IWindow):
 		trackListWidget = self.getElement("trackListWidget")
 		trackList = self.trackList
 		items = [trackList[index] for index in trackListWidget.curselection()]
-		self.sendEvent("yandex.download", items=items)
+		self.sendEvent("yandex.download", items=[i.trackId for i in items])
 
 	@property
 	def trackList(self):
