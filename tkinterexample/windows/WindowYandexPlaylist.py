@@ -1,27 +1,21 @@
-from tkinter import BOTTOM, Listbox, BOTH, TOP, END
+from tkinter import BOTH, TOP
 from tkinter.ttk import Button
 from typing import List
 
 from yandex_music import Track
 
 from windows.IWindow import IWindow
+from windows.widgets.TrackListWidget import TrackListWidget
 
 
 class WindowYandexPlaylist(IWindow):
 	def initUI(self):
 		button = Button(self, text="Download", command=self.download)
-		button.pack(side=BOTTOM)
+		button.pack(side=TOP)
 
-		listbox = Listbox(self)
-		listbox.pack(side=TOP, fill=BOTH, pady=5, expand=True)
-
-		# self.pack(fill=BOTH, expand=True)
-
-		# button = Button(self, text="GoBack", command=self.close)
-		# button.pack(side=BOTTOM)
-
-		# playlistWidget.doUpdate(resultList)
-		return {"listbox": listbox}
+		trackListWidget = TrackListWidget(self.env, self)
+		trackListWidget.pack(side = TOP, fill=BOTH, expand=True)
+		return {"trackListWidget": trackListWidget}
 
 	def getListenersConfig(self):
 		return {"yandex.tracks.dataChanged": self.onTracksLoaded}
@@ -30,22 +24,13 @@ class WindowYandexPlaylist(IWindow):
 		self.onTracksLoaded()
 
 	def onTracksLoaded(self, *args):
-		self.doUpdate(self.trackList)
-
-	def doUpdate(self, trackList):
-		listbox = self.getElement("listbox")
-		listbox.delete(0, END)
-
-		if not trackList:
-			return
-
-		for info in trackList:
-			listbox.insert(END, info.title)
+		trackListWidget = self.getElement("trackListWidget")
+		trackListWidget.doUpdate(self.trackList)
 
 	def download(self):
-		listbox = self.getElement("listbox")
+		trackListWidget = self.getElement("trackListWidget")
 		trackList = self.trackList
-		items = [trackList[index] for index in listbox.curselection()]
+		items = [trackList[index] for index in trackListWidget.curselection()]
 		self.sendEvent("yandex.download", items=items)
 
 	@property

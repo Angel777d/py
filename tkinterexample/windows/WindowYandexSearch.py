@@ -1,8 +1,9 @@
-from tkinter import LEFT, TOP, X, BOTH, TRUE
-from tkinter.tix import Label, Frame
+from tkinter import Frame, Label, TOP
+from tkinter import LEFT, X, BOTH, TRUE
 from typing import ClassVar
 
-from yandex_music import Search, SearchResult
+from yandex_music import Search
+from yandex_music import SearchResult
 
 from model import Events
 from windows.IWindow import IWindow
@@ -17,8 +18,6 @@ class SearchResultFrame(Frame):
 		for index in range(min(search.total, search.per_page, 4)):
 			item = search.results[index]
 			widgetClass(self, callback).show(item)
-
-		self.pack(side=TOP, pady=5, fill=X)
 
 
 class WindowYandexSearch(IWindow):
@@ -59,9 +58,13 @@ class WindowYandexSearch(IWindow):
 			"playlist": (PlaylistWidget, search.playlists, "Playlists", self.showPlaylist),
 		}
 
-		SearchResultFrame(scrollFrame).initUI(*data[best])
+		frame = SearchResultFrame(scrollFrame)
+		frame.initUI(*data[best])
+		frame.pack(side=TOP, pady=5, fill=X)
 		for resultType in [t for t in order if t != best]:
-			SearchResultFrame(scrollFrame).initUI(*data[resultType])
+			frame = SearchResultFrame(scrollFrame)
+			frame.initUI(*data[resultType])
+			frame.pack(side=TOP, pady=5, fill=X)
 
 	def showPlaylist(self, playlist):
 		self.sendEvent("yandex.request.playlist", playlist=playlist)
