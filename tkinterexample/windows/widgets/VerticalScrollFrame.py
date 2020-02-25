@@ -7,6 +7,19 @@ from tkinter import Canvas, LEFT, BOTH
 from tkinter.ttk import Widget, Frame
 
 
+class OuterFrame(Frame):
+	def __init__(self, master=None, **kw):
+		self.rel = None
+		super().__init__(master, **kw)
+
+	def setRelated(self, rel):
+		self.rel = rel
+
+	def destroy(self):
+		self.rel.destroy()
+		super().destroy()
+
+
 class VerticalScrolledFrame:
 	"""
 	A vertically scrolled Frame that can be treated like any other Frame
@@ -23,7 +36,7 @@ class VerticalScrolledFrame:
 		width = kwargs.pop('width', None)
 		height = kwargs.pop('height', None)
 		bg = kwargs.pop('bg', kwargs.pop('background', None))
-		self.outer = Frame(master, **kwargs)
+		self.outer = OuterFrame(master, **kwargs)
 
 		# self.vsb = Scrollbar(self.outer, orient=VERTICAL)
 		# self.vsb.pack(fill=Y, side=RIGHT)
@@ -44,6 +57,8 @@ class VerticalScrolledFrame:
 
 		self.outer_attr = set(dir(Widget))
 
+		self.outer.setRelated(self)
+
 	def __getattr__(self, item):
 		if item in self.outer_attr:
 			# geometry attributes etc (eg pack, destroy, tkraise) are passed on to self.outer
@@ -51,6 +66,9 @@ class VerticalScrolledFrame:
 		else:
 			# all other attributes (_w, children, etc) are passed to self.inner
 			return getattr(self.inner, item)
+
+	def destroy(self):
+		self._unbind_mouse()
 
 	def _on_frame_configure(self, event=None):
 		x1, y1, x2, y2 = self.canvas.bbox("all")
