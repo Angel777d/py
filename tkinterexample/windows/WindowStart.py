@@ -22,7 +22,7 @@ class WindowStart(IWindow):
 		player.pack(side=BOTTOM, fill=X, expand=False)
 
 		menu = MenuWidget(self.env, self)
-		menu.pack(side=LEFT, fill=Y, expand=False)
+		menu.pack(side=LEFT, fill=Y, expand=False, padx=5)
 		menu.onYandex = self.onStartClick
 
 		mainFrame = Frame(self)

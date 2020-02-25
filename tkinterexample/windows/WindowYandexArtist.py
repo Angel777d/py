@@ -4,6 +4,7 @@ from tkinter.ttk import Label, Frame
 from yandex_music import BriefInfo
 
 from model import Events
+from utils.Utils import clearItem
 from windows.IWindow import IWindow
 from windows.widgets.TrackListWidget import TrackListWidget
 from windows.widgets.YandexTilesWidgets import ArtistWidget, AlbumWidget
@@ -31,12 +32,6 @@ class WindowYandexArtist(IWindow):
 	def onInitialized(self):
 		self.onArtistChanged()
 
-	@staticmethod
-	def clearItem(item):
-		children = [c for c in item.children.values()]
-		for child in children:
-			child.destroy()
-
 	def onArtistChanged(self, *args):
 
 		artist = self.env.data.get("yandex").get("artist")
@@ -44,8 +39,8 @@ class WindowYandexArtist(IWindow):
 		artist_albums = self.env.data.get("yandex").get("artist_albums")
 		artist_tracks = self.env.data.get("yandex").get("artist_tracks")
 
-		self.clearItem(self.getElement("info"))
-		self.clearItem(self.getElement("albums"))
+		clearItem(self.getElement("info"))
+		clearItem(self.getElement("albums"))
 
 		# image
 		frame = self.getElement("info")

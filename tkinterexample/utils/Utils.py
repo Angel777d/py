@@ -1,6 +1,12 @@
 from pathlib import Path
 
 
+def clearItem(item):
+	children = [c for c in item.children.values()]
+	for child in children:
+		child.destroy()
+
+
 def writeFile(path: Path, value: str):
 	try:
 		path.parent.mkdir(exist_ok=True)
