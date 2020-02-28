@@ -1,5 +1,5 @@
-from tkinter import BOTH, TOP
-from tkinter.ttk import Button
+from tkinter import TOP, X, RIGHT
+from tkinter.ttk import Button, Frame
 from typing import List
 
 from yandex_music import Track
@@ -10,11 +10,14 @@ from windows.widgets.TrackListWidget import TrackListWidget
 
 class WindowYandexPlaylist(IWindow):
 	def initUI(self):
-		button = Button(self, text="Download", command=self.download)
-		button.pack(side=TOP)
+		frame = Frame(self)
+		button = Button(frame, text="Download All", command=self.download)
+		button.pack(side=RIGHT)
+		frame.pack(side=TOP, fill=X)
 
-		trackListWidget = TrackListWidget(self.env, self)
-		trackListWidget.pack(side = TOP, fill=BOTH, expand=True)
+		trackListWidget = TrackListWidget(self.env, self, 12)
+		trackListWidget.pack(side=TOP, fill=X)
+
 		return {"trackListWidget": trackListWidget}
 
 	def getListenersConfig(self):
@@ -24,14 +27,10 @@ class WindowYandexPlaylist(IWindow):
 		self.onTracksLoaded()
 
 	def onTracksLoaded(self, *args):
-		trackListWidget = self.getElement("trackListWidget")
-		trackListWidget.doUpdate(self.trackList)
+		self.getElement("trackListWidget").doUpdate(self.trackList)
 
 	def download(self):
-		trackListWidget = self.getElement("trackListWidget")
-		trackList = self.trackList
-		items = [trackList[index] for index in trackListWidget.curselection()]
-		self.sendEvent("yandex.download", items=[i.trackId for i in items])
+		self.sendEvent("yandex.download", items=[i.trackId for i in self.trackList])
 
 	@property
 	def trackList(self):

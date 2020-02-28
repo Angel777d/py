@@ -7,8 +7,9 @@ from yandex_music import SearchResult
 
 from model import Events
 from windows.IWindow import IWindow
+from windows.widgets.TrackListWidget import TrackListWidget
 from windows.widgets.VerticalScrollFrame import VerticalScrolledFrame
-from windows.widgets.YandexTilesWidgets import ArtistWidget, AlbumWidget, TrackWidget, PlaylistWidget
+from windows.widgets.YandexTilesWidgets import ArtistWidget, AlbumWidget, PlaylistWidget
 
 
 class SearchResultFrame(Frame):
@@ -46,14 +47,23 @@ class WindowYandexSearch(IWindow):
 		for child in children:
 			child.destroy()
 
+		trackListWidget = TrackListWidget(self.env, self, 5)
+		trackListWidget.pack(side=TOP, fill=X)
+		trackListWidget.doUpdate(search.tracks.results)
+
 		scrollFrame = VerticalScrolledFrame(self)
 		scrollFrame.pack(side=LEFT, fill=BOTH, expand=TRUE)
 
 		best = search.best.type
-		order = ["artist", "track", "album", "playlist"]
+		order = [
+			"artist",
+			# "track",
+			"album",
+			"playlist"
+		]
 		data = {
 			"artist": (ArtistWidget, search.artists, "Artist", self.showArtist),
-			"track": (TrackWidget, search.tracks, "Tracks", self.showTrack),
+			# "track": (TrackWidget, search.tracks, "Tracks", self.showTrack),
 			"album": (AlbumWidget, search.albums, "Albums", self.showAlbum),
 			"playlist": (PlaylistWidget, search.playlists, "Playlists", self.showPlaylist),
 		}
@@ -61,6 +71,7 @@ class WindowYandexSearch(IWindow):
 		frame = SearchResultFrame(scrollFrame)
 		frame.initUI(*data[best])
 		frame.pack(side=TOP, pady=5, fill=X)
+
 		for resultType in [t for t in order if t != best]:
 			frame = SearchResultFrame(scrollFrame)
 			frame.initUI(*data[resultType])

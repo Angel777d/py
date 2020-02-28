@@ -52,6 +52,7 @@ class IContainer:
 class IWidget(IEventHandler, Frame):
 	def __init__(self, env, parent, **kwargs):
 		self.env: Env = env
+		self.data = {}
 		IEventHandler.__init__(self, env.eventBus)
 		Frame.__init__(self, parent, **kwargs)
 		self.elements = self.initUI()
@@ -71,6 +72,9 @@ class IWidget(IEventHandler, Frame):
 	def initUI(self):
 		return {}
 
+	def setData(self, value, key="data"):
+		self.data[key] = value
+
 
 class IWindowContainer(IContainer):
 	@property
@@ -86,9 +90,6 @@ class IWindow(IWidget, IWindowContainer):
 
 	def packUI(self):
 		self.pack(fill=BOTH, expand=True)
-
-	def setData(self, data):
-		pass
 
 	def close(self):
 		IWindowContainer.close(self)

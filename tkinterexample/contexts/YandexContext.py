@@ -8,7 +8,6 @@ from model import Events
 from model.MediaLibEntry import MediaLibEntry
 from utils.Env import ConfigProps
 from utils.SimpleThread import SimpleThread
-from yandex import LocalTrackList
 from yandex.Extentions import folder, filename, trackSimpleData
 
 LANDING_PRIMARY = ["personal-playlists"]
@@ -113,7 +112,7 @@ class YandexContext(IContext):
 
 		def doLoad():
 			tracks = client.users_playlists(kind=playlist.kind, user_id=playlist.uid)[0].tracks
-			yd["tracks"] = LocalTrackList.getTracks(tracks)
+			yd["tracks"] = client.tracks([t.track_id for t in tracks])
 			self.sendEvent("yandex.tracks.dataChanged")
 			print("[YandexContext] got playlist info")
 
