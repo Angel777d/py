@@ -1,35 +1,12 @@
-from tkinter import Listbox, TOP, BOTH, END
+from tkinter import Listbox, TOP, BOTH, END, X
 from tkinter.ttk import Frame, Label
 
-from yandex_music import Landing
+from yandex_music import Landing, Playlist
 
 from model import Events
+from utils.Utils import clearItem
 from windows.IWindow import IWindow
-
-
-# class PersonalPlaylistWidget(Frame):
-#     SIZE = 200
-#
-#     def __init__(self, parent, **kwargs):
-#         Frame.__init__(self, parent)
-#         self.canvas = Canvas(self, width=self.SIZE, height=self.SIZE)
-#         self.pack()
-#
-#     def draw(self):
-#         c = self.canvas
-#
-#         c.create_rectangle(0, 0, self.SIZE, self.SIZE, fill='gray', width=0)
-#         c.create_text(self.SIZE / 2, self.SIZE / 2, text="Playlist Name", justify=CENTER)  # , font="Verdana 14")
-#         c.create_text(self.SIZE, self.SIZE, text="Description", anchor=SE, fill="#FF00FF")
-#         c.bind("<Button-1>", self.onClick)
-#
-#         c.pack()
-#
-#     def doUpdate(self, playlist: Playlist):
-#         self.playlist = playlist
-#
-#     def onClick(self, ev):
-#         pass
+from windows.widgets.YandexTilesWidgets import PlaylistWidget
 
 
 class WindowYandexLanding(IWindow):
@@ -39,7 +16,7 @@ class WindowYandexLanding(IWindow):
 		label.pack()
 
 		personal = Frame(self, height=100)
-		# personal.pack(side=TOP, fill=X, expand=True)
+		personal.pack(side=TOP, fill=X, expand=True)
 
 		listbox = Listbox(self)
 		listbox.pack(side=TOP, fill=BOTH, pady=5, expand=True)
@@ -61,24 +38,29 @@ class WindowYandexLanding(IWindow):
 
 		if not landing:
 			return
+		self.showPersonal()
 
 		playlists = self.playlists
 		for playlist in playlists:
 			listbox.insert(END, "%s: [%s]" % (playlist.title, playlist.description))
 		listbox.select_set(0)
 
-	# def showPersonal(self, block):
-	#     frame = self.getElement("personal")
-	#     for entity in block.entities:
-	#         playlist: Playlist = entity.data.data
-	#         widget = PersonalPlaylistWidget(frame)
-	#         widget.doUpdate(playlist)
+	def showPersonal(self):
+		block = [b for b in self.landing.blocks if b.type == "personal-playlists"][0]
+		frame = self.getElement("personal")
+		clearItem(frame)
+		for entity in block.entities:
+			playlist: Playlist = entity.data.data
+			widget = PlaylistWidget(frame, self.showPlaylist)
+			widget.show(playlist)
 
 	def onListClick(self, ev):
 		listbox = self.getElement("listbox")
 		playlists = self.playlists
 		playlist = [playlists[index] for index in listbox.curselection()][0]
+		self.showPlaylist(playlist)
 
+	def showPlaylist(self, playlist):
 		self.sendEvent("yandex.request.playlist", playlist=playlist)
 		self.sendEvent(Events.WINDOW_OPEN, name="window.yandex.playlist")
 
@@ -95,7 +77,8 @@ class WindowYandexLanding(IWindow):
 		for block in landing.blocks:
 			for entity in block.entities:
 				if entity.type == "personal-playlist":
-					playlists.append(entity.data.data)
+					# playlists.append(entity.data.data)
+					pass
 				elif entity.type == "playlist":
 					playlists.append(entity.data)
 				else:

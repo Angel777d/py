@@ -11,14 +11,14 @@ SIZE = 200
 
 
 class EntityCover(Canvas):
-	def __init__(self, size, master=None, cnf={}, **kw):
+	def __init__(self, master=None, cnf={}, **kw):
 		self.img = None
 		self.w = kw.get("width")
 		self.h = kw.get("height")
 		super().__init__(master, cnf, **kw)
+		self.create_rectangle(0, 0, self.w, self.h, fill='gray', width=0)
 
 	def loadCover(self, cover):
-		self.create_rectangle(0, 0, self.w, self.h, fill='gray', width=0)
 		if not cover:
 			return
 
@@ -51,7 +51,7 @@ class IEntityWidget(Frame):
 		self.entity = entity
 
 	def doShow(self, cover):
-		c = EntityCover(SIZE, self, width=SIZE, height=SIZE)
+		c = EntityCover(self, width=SIZE, height=SIZE)
 		c.loadCover(cover)
 		c.pack(side=LEFT)
 		c.bind("<Button-1>", self.onClick)
