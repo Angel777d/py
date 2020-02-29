@@ -1,14 +1,15 @@
-import time
+import os
 from pathlib import Path
 
+from mutagen.mp3 import MP3
 from yandex_music import Client
 
 from contexts.IContext import IContext
 from model import Events
-from model.MediaLibEntry import MediaLibEntry
 from utils.Env import ConfigProps
 from utils.SimpleThread import SimpleThread
-from yandex.Extentions import folder, filename, trackSimpleData
+from utils.Utils import writeFile
+from yandex.Extentions import folder, filename
 
 LANDING_PRIMARY = ["personal-playlists"]
 
@@ -122,19 +123,37 @@ class YandexContext(IContext):
 		items = ev.get("items")
 		client = self.client
 		tracks = client.tracks(items)
-		for track in tracks:
-			path = Path(self.env.config.get(ConfigProps.LIBRARY_PATH), folder(track))
-			path.mkdir(parents=True, exist_ok=True)
-			path = path.joinpath(filename(track))
-			self.__download(path, track)
-			libEntry = MediaLibEntry(path.as_posix(), *trackSimpleData(track))
-			self.sendEvent("mediaLib.add.track", entry=libEntry)
 
-	def __download(self, path, track):
-		if not path.exists():
-			def doDownload():
-				print("[YandexContext] start download:", path)
-				track.download(path)
-				print("[YandexContext] downloaded:", path)
+		def doDownload():
+			from mutagen.easyid3 import EasyID3
+			easyID3List = EasyID3.valid_keys.keys()
+			print(easyID3List)
 
-			SimpleThread(doDownload).start()
+			playlist = "#EXTM3U\n"
+			libPath = self.env.config.get(ConfigProps.LIBRARY_PATH)
+			for track in tracks:
+				path = Path(libPath, folder(track))
+				path.mkdir(parents=True, exist_ok=True)
+				path = path.joinpath(filename(track))
+				if not path.exists():
+					print("[YandexContext] start download:", path)
+					track.download(path)
+					print("[YandexContext] downloaded:", path)
+
+				# audio = mp3(path)
+				audio = MP3(path, ID3=EasyID3)
+
+				audio["title"] = track.title
+				audio["album"] = track.albums[0].title
+				audio["artist"] = track.artists[0].name
+				audio.save()
+
+				playlist += "#EXTINF:%s, %s - %s\n" % (int(audio.info.length), track.artists[0].name, track.title)
+				playlist += "%s\n" % path.relative_to(Path(libPath)).as_posix()
+
+			path = Path(libPath).joinpath("playlist.m3u8")
+			writeFile(path, playlist)
+			print("all files downloaded. playlist created. open playlist")
+			os.startfile(path)
+
+		SimpleThread(doDownload).start()

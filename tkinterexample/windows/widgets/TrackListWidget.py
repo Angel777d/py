@@ -75,6 +75,7 @@ class TrackListWidget(IWidget):
 
 	def destroy(self):
 		self._unbind_mouse()
+		super().destroy()
 
 	def doUpdate(self, trackList):
 		scroll = self.getElement("scroll")

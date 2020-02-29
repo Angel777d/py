@@ -1,6 +1,6 @@
 from yandex_music import Artist, Album, Track, Playlist
 
-_EXCLUDED = ":/?|;."
+_EXCLUDED = ':/?|;.<>*"'
 
 
 def trackSimpleData(track: Track):
@@ -19,7 +19,7 @@ def folder(track: Track):
 
 
 def filename(track: Track):
-	title = "".join([c for c in track.title if c not in _EXCLUDED])
+	title = "".join(["_" if c in _EXCLUDED else c for c in track.title])
 	return "%s.mp3" % title
 
 

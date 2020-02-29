@@ -10,7 +10,7 @@ def clearItem(item):
 def writeFile(path: Path, value: str):
 	try:
 		path.parent.mkdir(exist_ok=True)
-		text_file = Path.open(path, "w")
+		text_file = Path.open(path, "w", encoding="utf-8")
 		text_file.write(value)
 		text_file.close()
 	except IOError as err:
@@ -22,7 +22,7 @@ def writeFile(path: Path, value: str):
 def readFile(path: Path) -> str:
 	token = ""
 	try:
-		f = Path.open(path, "r")
+		f = Path.open(path, "r", encoding="utf-8")
 		if f.mode == 'r':
 			token = f.read()
 	except IOError as err:
