@@ -6,12 +6,18 @@ from tkinter.ttk import Frame, Label
 from yandex_music import Landing, Playlist
 
 from model import Events
+from utils.Env import Env
 from utils.Utils import clearItem
-from windows.IWindow import IWindow
+from windows.IWindow import IWindow, IWindowContainer
 from windows.widgets.YandexTilesWidgets import PlaylistWidget
 
 
 class WindowYandexLanding(IWindow):
+
+	def __init__(self, env: Env, name: str, parentWindow: IWindowContainer, **kwargs):
+		self.widgetsToPack = []
+		super().__init__(env, name, parentWindow, **kwargs)
+		self.bind("<Configure>", self.onCFG)
 
 	def initUI(self):
 		personal = Frame(self, height=100)
@@ -21,18 +27,15 @@ class WindowYandexLanding(IWindow):
 
 		other = Frame(self, height=100)
 		other.pack(side=TOP, fill=X, expand=True)
-		self.bind("<Configure>", self.onCFG)
 
 		return {"personal": personal, "other": other}
 
 	def onCFG(self, event):
-		w = event.width
-		h = event.height
-		size = int(w / 220)
+		size = max(1, int(event.width / 220))
 		oldSize = self.getData("size")
-		self.setData(size, "size")
-		# if oldSize != size:
-		# 	self.showLanding()
+		if oldSize != size:
+			self.setData(size, "size")
+			self.packAll()
 
 	def onInitialized(self):
 		self.showLanding()
@@ -45,9 +48,10 @@ class WindowYandexLanding(IWindow):
 
 		if not landing:
 			return
-
+		self.widgetsToPack.clear()
 		self.showPersonal()
 		self.showOther()
+		self.packAll()
 
 	def showPersonal(self):
 		block = [b for b in self.landing.blocks if b.type == "personal-playlists"][0]
@@ -66,10 +70,16 @@ class WindowYandexLanding(IWindow):
 			self.addPlaylist(playlist, frame, next(index))
 
 	def addPlaylist(self, playlist, frame, index):
-		d = self.data
-		columns = self.getData("size", 3)
 		widget = PlaylistWidget(frame, self.showPlaylist)
 		widget.show(playlist)
+		self.widgetsToPack.append((widget, index))
+
+	def packAll(self):
+		for widget, index in self.widgetsToPack:
+			self.packWidget(widget, index)
+
+	def packWidget(self, widget, index):
+		columns = self.getData("size", 3)
 		row = int(math.floor(index / columns))
 		col = int(math.fmod(index, columns))
 		widget.grid(row=row, column=col)
