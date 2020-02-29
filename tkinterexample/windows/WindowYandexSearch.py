@@ -1,5 +1,5 @@
 from tkinter import Frame, Label, TOP
-from tkinter import LEFT, X, BOTH, TRUE
+from tkinter import LEFT, X
 from typing import ClassVar
 
 from yandex_music import Search
@@ -17,7 +17,9 @@ class SearchResultFrame(Frame):
 		label.pack(side=TOP)
 		for index in range(min(search.total, search.per_page, 4)):
 			item = search.results[index]
-			widgetClass(self, callback).show(item)
+			w = widgetClass(self, callback)
+			w.pack(side=LEFT)
+			w.show(item)
 
 
 class WindowYandexSearch(IWindow):

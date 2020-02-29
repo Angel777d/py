@@ -73,7 +73,12 @@ class IWidget(IEventHandler, Frame):
 		return {}
 
 	def setData(self, value, key="data"):
+		# print("set data", value, "to key", key)
 		self.data[key] = value
+
+	def getData(self, key, default=None):
+		# print("get data", self.data.get(key), "by key", key)
+		return self.data.get(key, default)
 
 
 class IWindowContainer(IContainer):

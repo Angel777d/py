@@ -64,18 +64,15 @@ class AlbumWidget(IEntityWidget):
 	def show(self, entity):
 		super().show(entity)
 		self.doShow(getAlbumCover(entity))
-		self.pack(side=LEFT)
 
 
 class ArtistWidget(IEntityWidget):
 	def show(self, entity):
 		super().show(entity)
 		self.doShow(getArtistCover(entity))
-		self.pack(side=LEFT)
 
 
 class PlaylistWidget(IEntityWidget):
 	def show(self, entity):
 		super().show(entity)
 		self.doShow(getPlaylistCover(entity))
-		self.pack(side=LEFT)
