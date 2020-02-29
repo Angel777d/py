@@ -3,7 +3,7 @@ from types import FunctionType
 
 
 class SimpleThread(Thread):
-	def __init__(self, method: FunctionType, callback: FunctionType = None, name=""):
+	def __init__(self, method: FunctionType, callback=None, name=""):
 		Thread.__init__(self, name=name)
 		self.method = method
 		self.callback = callback

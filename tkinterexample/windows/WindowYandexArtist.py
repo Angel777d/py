@@ -7,25 +7,21 @@ from model import Events
 from utils.Utils import clearItem
 from windows.IWindow import IWindow
 from windows.widgets.TrackListWidget import TrackListWidget
-from windows.widgets.VerticalScrollFrame import VerticalScrolledFrame
 from windows.widgets.YandexTilesWidgets import ArtistWidget, AlbumWidget
 
 
 class WindowYandexArtist(IWindow):
 	def initUI(self):
-		scroll = VerticalScrolledFrame(self)
-		scroll.pack(fill=BOTH, expand=True)
-
-		label = Label(scroll, text="Artist Window")
+		label = Label(self, text="Artist Window")
 		label.pack(side=TOP)
 
-		info = Frame(scroll)
+		info = Frame(self)
 		info.pack(side=TOP, fill=X)
 
-		trackListWidget = TrackListWidget(self.env, scroll)
+		trackListWidget = TrackListWidget(self.env, self)
 		trackListWidget.pack(side=TOP, fill=X)
 
-		albums = Frame(scroll)
+		albums = Frame(self)
 		albums.pack(side=TOP, fill=X)
 
 		return {"label": label, "trackListWidget": trackListWidget, "info": info, "albums": albums}
