@@ -1,7 +1,7 @@
 import math
 from itertools import count
 from tkinter import TOP, X
-from tkinter.ttk import Frame, Label
+from tkinter.ttk import Frame, Label, Widget
 
 from yandex_music import Landing, Playlist
 
@@ -17,7 +17,10 @@ class WindowYandexLanding(IWindow):
 	def __init__(self, env: Env, name: str, parentWindow: IWindowContainer, **kwargs):
 		self.widgetsToPack = []
 		super().__init__(env, name, parentWindow, **kwargs)
-		self.bind("<Configure>", self.onCFG)
+
+		p = parentWindow.viewContainer.winfo_parent()
+		p = parentWindow.viewContainer.nametowidget(p)
+		p.bind("<Configure>", self.onCFG)
 
 	def initUI(self):
 		personal = Frame(self, height=100)

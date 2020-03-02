@@ -3,6 +3,7 @@ from tkinter.ttk import Frame, Label, Button
 
 from yandex_music import Track
 
+from ScrollSupport import ScrollElement
 from utils.Utils import clearItem
 from windows.IWindow import IWidget
 
@@ -53,14 +54,16 @@ class TrackItemWidget(IWidget):
 # self.elements.get("artist").configure(text="[%s]" % track.artists[0].name)
 
 
-class TrackListWidget(IWidget):
+class TrackListWidget(IWidget, ScrollElement):
 
 	def __init__(self, env, parent, size=10, **kwargs):
 		self._size = size
 		self._tracks = []
 		self._pos = 0
 		self._items = []
-		super().__init__(env, parent, **kwargs)
+		ScrollElement.__init__(self)
+		IWidget.__init__(self, env, parent, **kwargs)
+		self.initScroll(self)
 
 	def initUI(self):
 		scroll = Frame(self)
@@ -69,13 +72,6 @@ class TrackListWidget(IWidget):
 		label = Label(self, text="No tracks")
 		label.pack(side=TOP, fill=X)
 		return {"scroll": scroll, "label": label}
-
-	def onInitialized(self):
-		self._bind_mouse()
-
-	def destroy(self):
-		self._unbind_mouse()
-		super().destroy()
 
 	def doUpdate(self, trackList):
 		scroll = self.getElement("scroll")
@@ -105,17 +101,8 @@ class TrackListWidget(IWidget):
 		listbox = self.getElement("listbox")
 		return listbox.curselection()
 
-	def _bind_mouse(self, event=None):
-		self.bind_all("<4>", self._on_mousewheel)
-		self.bind_all("<5>", self._on_mousewheel)
-		self.bind_all("<MouseWheel>", self._on_mousewheel)
-
-	def _unbind_mouse(self, event=None):
-		self.unbind_all("<4>")
-		self.unbind_all("<5>")
-		self.unbind_all("<MouseWheel>")
-
-	def _on_mousewheel(self, event):
+	def onScroll(self, event):
+		print("TrackListWidget::_on_mousewheel")
 		if event.num == 4 or event.delta > 0:
 			self.doScroll(-1)
 		elif event.num == 5 or event.delta < 0:
