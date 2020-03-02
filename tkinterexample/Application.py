@@ -10,7 +10,6 @@ from utils.StateManager import StateManager
 from windows.IWindow import RootWindow
 from windows.WindowConfig import WindowConfig
 from windows.WindowStart import WindowStart
-from windows.WindowTracksAll import WindowTracksAll
 from windows.WindowYandexAlbum import WindowYandexAlbum
 from windows.WindowYandexArtist import WindowYandexArtist
 from windows.WindowYandexLanding import WindowYandexLanding
@@ -33,7 +32,6 @@ class Application:
 		self.env.rootWindow = RootWindow(self.env, {
 			"window.start": (WindowStart, "root"),
 			"window.config": (WindowConfig, "window.start"),
-			"window.localTracks": (WindowTracksAll, "window.start"),
 			"window.yandex.login": (WindowYandexLogin, "window.start"),
 			"window.yandex.landing": (WindowYandexLanding, "window.start"),
 			"window.yandex.search": (WindowYandexSearch, "window.start"),

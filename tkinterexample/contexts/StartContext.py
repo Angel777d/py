@@ -21,7 +21,6 @@ class StartContext(IContext):
 		# init main app window
 		self.sendEvent(Events.WINDOW_OPEN, name="window.start")
 		self.sendEvent("app.initialized")
-		# self.sendEvent(Events.WINDOW_OPEN, name="window.localTracks", parent="window.start")
 
 	def onShowConfig(self, ev):
 		self.sendEvent(Events.WINDOW_OPEN, name="window.config")
