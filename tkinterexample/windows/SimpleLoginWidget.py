@@ -19,7 +19,7 @@ class SimpleLogin(Frame):
 		login = CaptionEntry(self, "Login", foreground="red")
 		password = CaptionEntry(self, "Password", foreground="red")
 
-		self.pack(fill=BOTH, expand=True)
+		self.pack()
 		login.pack(side=TOP, fill=X, padx=5, pady=5, expand=True)
 		password.pack(side=TOP, fill=X, padx=5, pady=5, expand=True)
 

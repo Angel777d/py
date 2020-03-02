@@ -37,6 +37,7 @@ class YandexContext(IContext):
 		self.yandexData = env.data.setdefault("yandex", {})
 		self.client: Client = self.yandexData.get("client")
 		IContext.__init__(self, env, data)
+		self.onStart()
 
 	# self.openMainWindow()
 
@@ -50,7 +51,7 @@ class YandexContext(IContext):
 			"yandex.request.artist": self.requestArtist,
 		}
 
-	def onStart(self, ev):
+	def onStart(self, ev=None):
 		self.requestLanding()
 		self.sendEvent(Events.WINDOW_OPEN, name="window.yandex.landing")
 

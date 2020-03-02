@@ -11,19 +11,18 @@ class MenuWidget(IWidget):
 		return {"yandex.client.dataChanged": self.onYandexLogin}
 
 	def initUI(self):
-		frame = Frame(self)
-		home = Button(frame, text="Home", command=lambda: self.sendEvent(Events.WINDOW_OPEN, name="window.localTracks"))
+		# frame = Frame(self)
+		# home = Button(frame, text="Home", command=lambda: self.sendEvent(Events.WINDOW_OPEN, name="window.localTracks"))
+		# home.pack(side=TOP, fill=X)
+		# frame.pack(side=TOP, fill=X, pady=20)
 
-		home.pack(side=TOP, fill=X)
-		frame.pack(side=TOP, fill=X, pady=20)
-
 		frame = Frame(self)
-		yandexLogin = Button(frame, text="Yandex Login", command=lambda: self.sendEvent("yandex.login"))
+		# yandexLogin = Button(frame, text="Yandex Login", command=lambda: self.sendEvent("yandex.login"))
 		yandexShow = Button(frame, text="Yandex Home", command=lambda: self.sendEvent("yandex.start"))
 		yandexSearch = CaptionEntry(frame, "Yandex Search")
 		yandexSearch.bind('<Return>', self.onSearch)
 
-		yandexLogin.pack(side=TOP, fill=X, pady=2)
+		# yandexLogin.pack(side=TOP, fill=X, pady=2)
 		yandexShow.pack(side=TOP, fill=X, pady=2)
 		yandexSearch.pack(side=TOP, fill=X, pady=2)
 		frame.pack(side=TOP, fill=X, pady=10)
@@ -33,7 +32,11 @@ class MenuWidget(IWidget):
 		config.pack(side=TOP, fill=X)
 		frame.pack(side=BOTTOM, fill=X)
 
-		return {"yandexSearch": yandexSearch, "yandexLogin": yandexLogin, "yandexShow": yandexShow}
+		return {
+			"yandexSearch": yandexSearch,
+			# "yandexLogin": yandexLogin,
+			"yandexShow": yandexShow
+		}
 
 	def onSearch(self, ev):
 		search: CaptionEntry = self.getElement("yandexSearch")
@@ -53,8 +56,8 @@ class MenuWidget(IWidget):
 		if isYandexReady:
 			self.getElement("yandexSearch").pack(side=TOP, fill=X, pady=2)
 			self.getElement("yandexShow").pack(side=TOP, fill=X, pady=2)
-			self.getElement("yandexLogin").pack_forget()
+			# self.getElement("yandexLogin").pack_forget()
 		else:
 			self.getElement("yandexSearch").pack_forget()
 			self.getElement("yandexShow").pack_forget()
-			self.getElement("yandexLogin").pack(side=TOP, fill=X, pady=2)
+			# self.getElement("yandexLogin").pack(side=TOP, fill=X, pady=2)

@@ -58,9 +58,6 @@ class WindowStart(IWindow, ScrollElement):
 		elif event.num == 5 or event.delta < 0:
 			canvas.yview_scroll(1, "units")
 
-	def onInitialized(self):
-		self.sendEvent(Events.WINDOW_OPEN, name="window.localTracks", parent=self.name)
-
 	def onStartClick(self):
 		self.sendEvent("yandex.login")
 
