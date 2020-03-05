@@ -46,15 +46,23 @@ class IEntityWidget(Frame):
 		self.entity = None
 		self.callback = callback
 		super().__init__(master, **kw)
+		c = EntityCover(self, width=SIZE, height=SIZE)
+		c.pack(side=LEFT)
+		c.bind("<Button-1>", self.onClick)
+		self.cover = c
+
+	def destroy(self):
+		self.cover.destroy()
+		self.cover = None
+		self.callback = None
+		self.entity = None
+		Frame.destroy(self)
 
 	def show(self, entity):
 		self.entity = entity
 
 	def doShow(self, cover):
-		c = EntityCover(self, width=SIZE, height=SIZE)
-		c.loadCover(cover)
-		c.pack(side=LEFT)
-		c.bind("<Button-1>", self.onClick)
+		self.cover.loadCover(cover)
 
 	def onClick(self, tkEv):
 		self.callback(self.entity)

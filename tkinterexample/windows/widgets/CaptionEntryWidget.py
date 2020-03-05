@@ -29,10 +29,8 @@ class CaptionEntry(Entry):
 		if not self.focused:
 			return
 		self.empty = not bool(self.content.get())
-		# print("[---]", "onContentChanged", self.content.get(), self.empty)
 
 	def onFocusIn(self, ev):
-		# print("[---]", "focus in", ev)
 		if self.empty:
 			self.content.set("")
 
@@ -40,7 +38,6 @@ class CaptionEntry(Entry):
 		self.focused = True
 
 	def onFocusOut(self, ev):
-		# print("[---]", "focus out", ev)
 		self.focused = False
 		if self.empty:
 			self.content.set(self.caption)

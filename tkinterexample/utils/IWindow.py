@@ -69,11 +69,9 @@ class IWidget(IEventHandler):
 		return {}
 
 	def setData(self, value, key="data"):
-		# print("set data", value, "to key", key)
 		self.data[key] = value
 
 	def getData(self, key="data", default=None):
-		# print("get data", self.data.get(key), "by key", key)
 		return self.data.get(key, default)
 
 
@@ -128,5 +126,8 @@ class RootWindow(IWindowContainer, IEventHandler):
 			print("[RootWindow] can't find parent window '%s' for '%s'" % (parentName, windowName))
 			return
 
-		window = windowClass(self.env, windowName, parentWindow, **kwargs)
-		print("[RootWindow] open:", windowName, parentName)
+		if self.findWindow(windowName):
+			print("[RootWindow] window '%s' already opened " % windowName)
+		else:
+			print("[RootWindow] open:", windowName, parentName)
+			window = windowClass(self.env, windowName, parentWindow, **kwargs)

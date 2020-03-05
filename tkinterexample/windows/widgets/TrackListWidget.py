@@ -91,7 +91,6 @@ class TrackListWidget(IWidgetTk, ScrollElement):
 		self.updateLabel()
 
 	def addTrack(self, parent, index):
-		print("add track:", index)
 		info = self._tracks[index]
 		item = TrackItemWidget(self.env, parent)
 		item.setData(info)

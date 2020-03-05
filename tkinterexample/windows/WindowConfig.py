@@ -1,5 +1,5 @@
 from pathlib import Path
-from tkinter import RIGHT, LEFT, filedialog, BOTTOM
+from tkinter import RIGHT, LEFT, filedialog
 from tkinter.ttk import Label, Frame, Button
 
 from utils.Env import ConfigProps
@@ -15,9 +15,6 @@ class WindowConfig(IWindowTk):
 		libPath = self.env.config.get(ConfigProps.LIBRARY_PATH)
 		label = Label(frame, text="LibraryPath: %s" % libPath)
 		label.pack(side=LEFT)
-
-		goback = Button(self, text="GoBack", command=self.goBack)
-		goback.pack(side=BOTTOM)
 
 		button = Button(frame, text="Change", command=self.onClick)
 		button.pack(side=RIGHT)

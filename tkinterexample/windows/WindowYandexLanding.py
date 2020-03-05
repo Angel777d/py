@@ -7,8 +7,8 @@ from yandex_music import Landing, Playlist
 
 import Events
 from utils.Env import Env
-from utils.Utils import clearItem
 from utils.IWindow import IWindowContainer
+from utils.Utils import clearItem
 from windows.IWindowTk import IWindowTk
 from windows.widgets.YandexTilesWidgets import PlaylistWidget
 
@@ -16,12 +16,18 @@ from windows.widgets.YandexTilesWidgets import PlaylistWidget
 class WindowYandexLanding(IWindowTk):
 
 	def __init__(self, env: Env, name: str, parentWindow: IWindowContainer, **kwargs):
-		self.widgetsToPack = []
+		self.playlistWidgets = {}
 		super().__init__(env, name, parentWindow, **kwargs)
 
 		p = parentWindow.viewContainer.winfo_parent()
 		p = parentWindow.viewContainer.nametowidget(p)
 		p.bind("<Configure>", self.onCFG)
+
+	def destroy(self):
+		for widget in self.playlistWidgets.values():
+			widget.destroy()
+		self.playlistWidgets.clear()
+		IWindowTk.destroy(self)
 
 	def initUI(self):
 		personal = Frame(self, height=100)
@@ -52,7 +58,7 @@ class WindowYandexLanding(IWindowTk):
 
 		if not landing:
 			return
-		self.widgetsToPack.clear()
+
 		self.showPersonal()
 		self.showOther()
 		self.packAll()
@@ -60,27 +66,31 @@ class WindowYandexLanding(IWindowTk):
 	def showPersonal(self):
 		block = [b for b in self.landing.blocks if b.type == "personal-playlists"][0]
 		frame = self.getElement("personal")
-		clearItem(frame)
 		index = count()
 		for entity in block.entities:
 			playlist: Playlist = entity.data.data
-			self.addPlaylist(playlist, frame, next(index))
+			widget = self.getWidget(frame, next(index))
+			widget.show(playlist)
 
 	def showOther(self):
 		frame = self.getElement("other")
-		clearItem(frame)
 		index = count()
 		for playlist in self.otherPlaylists:
-			self.addPlaylist(playlist, frame, next(index))
+			widget = self.getWidget(frame, next(index))
+			widget.show(playlist)
 
-	def addPlaylist(self, playlist, frame, index):
+	def getWidget(self, frame, index):
+		widget = self.playlistWidgets.get((frame, index))
+		if widget:
+			return widget
 		widget = PlaylistWidget(frame, self.showPlaylist)
-		widget.show(playlist)
-		self.widgetsToPack.append((widget, index))
+		self.playlistWidgets[(frame, index)] = widget
+		return widget
 
 	def packAll(self):
-		for widget, index in self.widgetsToPack:
-			self.packWidget(widget, index)
+		for key in self.playlistWidgets:
+			frame, index = key
+			self.packWidget(self.playlistWidgets[key], index)
 
 	def packWidget(self, widget, index):
 		columns = self.getData("size", 3)
