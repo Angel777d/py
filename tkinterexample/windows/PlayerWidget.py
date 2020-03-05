@@ -2,7 +2,6 @@ from tkinter import Canvas, LEFT, BOTH, RIGHT, Label, TOP
 from tkinter.ttk import Frame, Button
 
 from model import Events
-from model.MediaLibEntry import MediaLibEntry
 from windows.IWindow import IWidget
 
 
@@ -37,12 +36,5 @@ class PlayerWidget(IWidget):
 		return {"title": title, "info": info}
 
 	def onTrackPlay(self, ev):
-		self.showTrack(ev.get("entry"))
-
-	def showTrack(self, track: [MediaLibEntry, None]):
-		if track:
-			title: Label = self.getElement("title")
-			title.configure(text=track.title)
-
-			info: Label = self.getElement("info")
-			info.configure(text="%s (%s)" % (track.artist, track.album))
+		self.getElement("title").configure(text=ev.get("title"))
+		self.getElement("info").configure(text="%s (%s)" % (ev.get("artist"), ev.get("album")))

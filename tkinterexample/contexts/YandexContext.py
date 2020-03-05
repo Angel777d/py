@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 from mutagen.mp3 import MP3
-from yandex_music import Client
+from yandex_music import Client, Track
 
 from contexts.IContext import IContext
 from model import Events
@@ -49,6 +49,7 @@ class YandexContext(IContext):
 			"yandex.request.playlist": self.requestPlaylist,
 			"yandex.request.album": self.requestAlbum,
 			"yandex.request.artist": self.requestArtist,
+			"yandex.request.playTrack": self.requestPlayTrack,
 		}
 
 	def onStart(self, ev=None):
@@ -158,3 +159,14 @@ class YandexContext(IContext):
 			os.startfile(path)
 
 		SimpleThread(doDownload).start()
+
+	def requestPlayTrack(self, ev):
+		track: Track = ev.get("track")
+		libPath = self.env.config.get(ConfigProps.LIBRARY_PATH)
+		path = Path(libPath, folder(track), filename(track))
+		if not path.exists():
+			track.download(path)
+
+		artist = track.artists[0].name if track.artists else ""
+		album = track.albums[0].title if track.albums else ""
+		self.sendEvent(Events.PLAYER_PLAY, path=path, title=track.title, artist=artist, album=album)

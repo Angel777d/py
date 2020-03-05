@@ -1,6 +1,5 @@
 import ScrollSupport
 from contexts.AudioPlayerContext import AudioPlayerContext
-from contexts.MediaLibContext import MediaLibContext
 from contexts.StartContext import StartContext
 from contexts.YandexContext import YandexContext
 from contexts.YandexLoginContext import YandexLoginContext
@@ -42,7 +41,6 @@ class Application:
 
 		self.env.contextManager = StateManager(self.env).applyConfig({
 			"context.start": StartContext,
-			"context.mediaLib": MediaLibContext,
 			"context.yandex.login": YandexLoginContext,
 			"context.yandex.start": YandexContext,
 			"context.audioPlayer": AudioPlayerContext,

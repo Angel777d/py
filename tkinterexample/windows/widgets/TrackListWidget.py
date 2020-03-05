@@ -34,7 +34,7 @@ class TrackItemWidget(IWidget):
 		# artist = Label(frame, text="[%s]" % "artist")
 		# artist.pack(side=TOP, fill=X)
 
-		button = Button(self, text="click me")
+		button = Button(self, text="click me", command=self.onClick)
 		button.pack(side=RIGHT)
 
 		return {
@@ -47,11 +47,12 @@ class TrackItemWidget(IWidget):
 		super().setData(value, key)
 		track: Track = value
 
+		# self.elements.get("album").configure(text=track.albums[0].title)
+		# self.elements.get("artist").configure(text="[%s]" % track.artists[0].name)
 		self.elements.get("title").configure(text=track.title)
 
-
-# self.elements.get("album").configure(text=track.albums[0].title)
-# self.elements.get("artist").configure(text="[%s]" % track.artists[0].name)
+	def onClick(self, ev=None):
+		self.sendEvent("yandex.request.playTrack", track=self.getData())
 
 
 class TrackListWidget(IWidget, ScrollElement):

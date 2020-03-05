@@ -5,7 +5,6 @@ from yandex_music import Album
 
 from utils.Utils import clearItem
 from windows.IWindow import IWindow
-from windows.widgets.TrackListWidget import TrackListWidget
 from windows.widgets.YandexTilesWidgets import AlbumWidget
 
 

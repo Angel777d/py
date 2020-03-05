@@ -15,7 +15,6 @@ class StartContext(IContext):
 	def init(self):
 
 		self.openContext("context.audioPlayer")
-		self.openContext("context.mediaLib")
 		self.openContext("context.yandex.login")
 
 		# init main app window
