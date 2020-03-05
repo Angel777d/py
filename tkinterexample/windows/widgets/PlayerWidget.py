@@ -1,13 +1,13 @@
 from tkinter import Canvas, LEFT, BOTH, RIGHT, Label, TOP
 from tkinter.ttk import Frame, Button
 
-from model import Events
-from windows.IWindow import IWidget
+import Events
+from windows.IWindowTk import IWidgetTk
 
 
-class PlayerWidget(IWidget):
+class PlayerWidget(IWidgetTk):
 	def __init__(self, env, parent, **kwargs):
-		IWidget.__init__(self, env, parent, **kwargs)
+		IWidgetTk.__init__(self, env, parent, **kwargs)
 
 	def getListenersConfig(self):
 		return {

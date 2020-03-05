@@ -5,7 +5,7 @@ from mutagen.mp3 import MP3
 from yandex_music import Client, Track
 
 from contexts.IContext import IContext
-from model import Events
+import Events
 from utils.Env import ConfigProps
 from utils.SimpleThread import SimpleThread
 from utils.Utils import writeFile

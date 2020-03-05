@@ -3,21 +3,21 @@ from tkinter.ttk import Frame, Label, Button
 
 from yandex_music import Track
 
-from ScrollSupport import ScrollElement
+from windows.ScrollSupport import ScrollElement
 from utils.Utils import clearItem
-from windows.IWindow import IWidget
+from windows.IWindowTk import IWidgetTk
 
 TRACK_ICON_SIZE = 30
 
 
-class TrackIcon(IWidget):
+class TrackIcon(IWidgetTk):
 	def initUI(self):
 		c = Canvas(self, width=TRACK_ICON_SIZE, height=TRACK_ICON_SIZE)
 		c.create_rectangle(0, 0, TRACK_ICON_SIZE, TRACK_ICON_SIZE, outline="#fb0", fill="#fb0", width=1)
 		c.pack()
 
 
-class TrackItemWidget(IWidget):
+class TrackItemWidget(IWidgetTk):
 	def initUI(self):
 		icon = TrackIcon(self.env, self)
 		icon.pack(side=LEFT)
@@ -55,7 +55,7 @@ class TrackItemWidget(IWidget):
 		self.sendEvent("yandex.request.playTrack", track=self.getData())
 
 
-class TrackListWidget(IWidget, ScrollElement):
+class TrackListWidget(IWidgetTk, ScrollElement):
 
 	def __init__(self, env, parent, size=10, **kwargs):
 		self._size = size
@@ -63,7 +63,7 @@ class TrackListWidget(IWidget, ScrollElement):
 		self._pos = 0
 		self._items = []
 		ScrollElement.__init__(self)
-		IWidget.__init__(self, env, parent, **kwargs)
+		IWidgetTk.__init__(self, env, parent, **kwargs)
 		self.initScroll(self)
 
 	def initUI(self):

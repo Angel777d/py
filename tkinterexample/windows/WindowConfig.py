@@ -3,10 +3,10 @@ from tkinter import RIGHT, LEFT, filedialog, BOTTOM
 from tkinter.ttk import Label, Frame, Button
 
 from utils.Env import ConfigProps
-from windows.IWindow import IWindow
+from windows.IWindowTk import IWindowTk
 
 
-class WindowConfig(IWindow):
+class WindowConfig(IWindowTk):
 
 	def initUI(self):
 		frame = Frame(self)

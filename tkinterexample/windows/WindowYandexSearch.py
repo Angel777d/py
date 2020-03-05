@@ -5,8 +5,8 @@ from typing import ClassVar
 from yandex_music import Search
 from yandex_music import SearchResult
 
-from model import Events
-from windows.IWindow import IWindow
+import Events
+from windows.IWindowTk import IWindowTk
 from windows.widgets.TrackListWidget import TrackListWidget
 from windows.widgets.YandexTilesWidgets import ArtistWidget, AlbumWidget, PlaylistWidget
 
@@ -22,7 +22,7 @@ class SearchResultFrame(Frame):
 			w.show(item)
 
 
-class WindowYandexSearch(IWindow):
+class WindowYandexSearch(IWindowTk):
 	def getListenersConfig(self):
 		return {"yandex.search.dataChanged": self.onSearchComplete}
 

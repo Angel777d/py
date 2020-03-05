@@ -1,4 +1,4 @@
-import ScrollSupport
+from windows import ScrollSupport
 from contexts.AudioPlayerContext import AudioPlayerContext
 from contexts.StartContext import StartContext
 from contexts.YandexContext import YandexContext
@@ -6,7 +6,7 @@ from contexts.YandexLoginContext import YandexLoginContext
 from utils import MediaKeysListener
 from utils.Env import Env
 from utils.StateManager import StateManager
-from windows.IWindow import RootWindow
+from utils.IWindow import RootWindow
 from windows.WindowConfig import WindowConfig
 from windows.WindowStart import WindowStart
 from windows.WindowYandexAlbum import WindowYandexAlbum

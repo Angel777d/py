@@ -4,11 +4,11 @@ from tkinter.ttk import Frame, Button
 from yandex_music import Album
 
 from utils.Utils import clearItem
-from windows.IWindow import IWindow
+from windows.IWindowTk import IWindowTk
 from windows.widgets.YandexTilesWidgets import AlbumWidget
 
 
-class WindowYandexAlbum(IWindow):
+class WindowYandexAlbum(IWindowTk):
 	def initUI(self):
 		frame = Frame(self)
 		button = Button(frame, text="Download Album", command=self.onDownload)

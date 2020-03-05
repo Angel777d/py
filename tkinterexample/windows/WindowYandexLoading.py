@@ -3,10 +3,10 @@ from tkinter.ttk import Label
 
 from utils.SimpleThread import SimpleThread
 from utils.Utils import emptyHandler
-from windows.IWindow import IWindow
+from windows.IWindowTk import IWindowTk
 
 
-class WindowYandexLoading(IWindow):
+class WindowYandexLoading(IWindowTk):
 
 	def __init__(self, env, data=None):
 		super().__init__(env, data)

@@ -1,12 +1,12 @@
 from tkinter import TOP, X, BOTTOM
 from tkinter.ttk import Button, Frame
 
-from model import Events
-from windows.IWindow import IWidget
+import Events
+from windows.IWindowTk import IWidgetTk
 from windows.widgets.CaptionEntryWidget import CaptionEntry
 
 
-class MenuWidget(IWidget):
+class MenuWidget(IWidgetTk):
 	def getListenersConfig(self):
 		return {"yandex.client.dataChanged": self.onYandexLogin}
 

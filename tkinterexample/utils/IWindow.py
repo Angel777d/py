@@ -1,8 +1,6 @@
-from tkinter import BOTH
-from tkinter.ttk import Frame
 from typing import Dict
 
-from model import Events
+import Events
 from utils.Env import Env
 from utils.EventBus import IEventHandler
 
@@ -49,12 +47,11 @@ class IContainer:
 		return None
 
 
-class IWidget(IEventHandler, Frame):
-	def __init__(self, env, parent, **kwargs):
+class IWidget(IEventHandler):
+	def __init__(self, env):
 		self.env: Env = env
 		self.data = {}
 		IEventHandler.__init__(self, env.eventBus)
-		Frame.__init__(self, parent, **kwargs)
 		self.elements = self.initUI()
 		self.onInitialized()
 
@@ -62,7 +59,6 @@ class IWidget(IEventHandler, Frame):
 		pass
 
 	def close(self):
-		self.destroy()
 		IEventHandler.close(self)
 		self.elements = None
 
@@ -88,13 +84,9 @@ class IWindowContainer(IContainer):
 
 
 class IWindow(IWidget, IWindowContainer):
-	def __init__(self, env: Env, name: str, parentWindow: IWindowContainer, **kwargs):
+	def __init__(self, env: Env, name: str, parentWindow: IWindowContainer):
 		IWindowContainer.__init__(self, name, parentWindow)
-		IWidget.__init__(self, env, parentWindow.viewContainer, **kwargs)
-		self.packUI()
-
-	def packUI(self):
-		self.pack(fill=BOTH, expand=True)
+		IWidget.__init__(self, env)
 
 	def close(self):
 		IWindowContainer.close(self)

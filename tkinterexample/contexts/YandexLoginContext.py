@@ -2,7 +2,7 @@ from yandex_music import Client
 from yandex_music.exceptions import Unauthorized, BadRequest
 
 from contexts.IContext import IContext
-from model import Events
+import Events
 from utils import Defaults
 from utils.Utils import readFile, writeFile
 

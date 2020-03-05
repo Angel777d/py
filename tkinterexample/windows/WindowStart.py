@@ -1,19 +1,18 @@
 from tkinter import BOTH, LEFT, Y, X, BOTTOM, Canvas, RIGHT
 from tkinter.ttk import Frame, Scrollbar
 
-from ScrollSupport import ScrollElement
-from model import Events
-from windows.IWindow import IWindow
-from windows.MenuWidget import MenuWidget
-from windows.PlayerWidget import PlayerWidget
+from windows.ScrollSupport import ScrollElement
+from windows.IWindowTk import IWindowTk
+from windows.widgets.MenuWidget import MenuWidget
+from windows.widgets.PlayerWidget import PlayerWidget
 
 
-class WindowStart(IWindow, ScrollElement):
+class WindowStart(IWindowTk, ScrollElement):
 
 	def __init__(self, env, name, parentWindow, **kwargs):
 		self.child = ""
 		ScrollElement.__init__(self)
-		IWindow.__init__(self, env, name, parentWindow, **kwargs)
+		IWindowTk.__init__(self, env, name, parentWindow, **kwargs)
 
 	@property
 	def viewContainer(self):
@@ -63,4 +62,4 @@ class WindowStart(IWindow, ScrollElement):
 
 	def addChild(self, windowName, windowInstance):
 		self.closeChildren()
-		IWindow.addChild(self, windowName, windowInstance)
+		IWindowTk.addChild(self, windowName, windowInstance)

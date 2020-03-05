@@ -1,5 +1,5 @@
 from contexts.IContext import IContext
-from model import Events
+import Events
 
 
 class StartContext(IContext):

@@ -1,18 +1,19 @@
 import math
 from itertools import count
 from tkinter import TOP, X
-from tkinter.ttk import Frame, Label, Widget
+from tkinter.ttk import Frame, Label
 
 from yandex_music import Landing, Playlist
 
-from model import Events
+import Events
 from utils.Env import Env
 from utils.Utils import clearItem
-from windows.IWindow import IWindow, IWindowContainer
+from utils.IWindow import IWindowContainer
+from windows.IWindowTk import IWindowTk
 from windows.widgets.YandexTilesWidgets import PlaylistWidget
 
 
-class WindowYandexLanding(IWindow):
+class WindowYandexLanding(IWindowTk):
 
 	def __init__(self, env: Env, name: str, parentWindow: IWindowContainer, **kwargs):
 		self.widgetsToPack = []

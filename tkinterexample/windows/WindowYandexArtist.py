@@ -1,16 +1,16 @@
-from tkinter import TOP, X, BOTH
+from tkinter import TOP, X
 from tkinter.ttk import Label, Frame
 
 from yandex_music import BriefInfo
 
-from model import Events
+import Events
 from utils.Utils import clearItem
-from windows.IWindow import IWindow
+from windows.IWindowTk import IWindowTk
 from windows.widgets.TrackListWidget import TrackListWidget
 from windows.widgets.YandexTilesWidgets import ArtistWidget, AlbumWidget
 
 
-class WindowYandexArtist(IWindow):
+class WindowYandexArtist(IWindowTk):
 	def initUI(self):
 		label = Label(self, text="Artist Window")
 		label.pack(side=TOP)

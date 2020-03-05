@@ -4,13 +4,13 @@ from typing import List
 
 from yandex_music import Track
 
-from windows.IWindow import IWindow
+from windows.IWindowTk import IWindowTk
 from windows.widgets.TrackListWidget import TrackListWidget
 from windows.widgets.YandexTilesWidgets import EntityCover
 from yandex.Extentions import getPlaylistCover
 
 
-class WindowYandexPlaylist(IWindow):
+class WindowYandexPlaylist(IWindowTk):
 	def initUI(self):
 		frame = Frame(self)
 		button = Button(frame, text="Download All", command=self.download)

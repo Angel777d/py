@@ -1,6 +1,6 @@
 from VLCPlayer import VLCPlayer
 from contexts.IContext import IContext
-from model import Events
+import Events
 
 
 class AudioPlayerContext(IContext):

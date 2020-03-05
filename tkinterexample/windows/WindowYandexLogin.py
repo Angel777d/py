@@ -1,8 +1,8 @@
-from windows.IWindow import IWindow
-from windows.SimpleLoginWidget import SimpleLogin
+from windows.IWindowTk import IWindowTk
+from windows.widgets.SimpleLoginWidget import SimpleLogin
 
 
-class WindowYandexLogin(IWindow):
+class WindowYandexLogin(IWindowTk):
 	def initUI(self):
 		SimpleLogin(self, self.onLoginApply, self.close)
 
