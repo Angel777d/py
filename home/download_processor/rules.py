@@ -1,6 +1,6 @@
 import os
 
-DOWNLOADS = os.path.normpath("D:/downloads")
+DOWNLOADS = os.path.normpath("E:/downloads")
 
 # rules
 RULES = {}
@@ -10,8 +10,8 @@ def add_rule(path, exts):
     RULES.update({ext: path for ext in exts})
 
 
-IMAGES = os.path.normpath("D:/Img")
-VIDEO = os.path.normpath("D:/Movie")
+IMAGES = os.path.normpath("E:/Img")
+VIDEO = os.path.normpath("E:/Movie")
 TORRENTS = os.path.normpath("//Keenetic_Giga/watch")
 
 add_rule(TORRENTS, (".torrent",))

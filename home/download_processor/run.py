@@ -1,3 +1,4 @@
 import move_files
+import rules
 
-move_files.run("D:/downloads")
+move_files.run(rules.DOWNLOADS)

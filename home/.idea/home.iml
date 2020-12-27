@@ -8,10 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/home_bot" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/localization" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="Remote Python 3.5.3 (sftp://angel@angelovich.ru:22/usr/bin/python3)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 2.7" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-  </component>
-  <component name="TestRunnerService">
-    <option name="PROJECT_TEST_RUNNER" value="Unittests" />
   </component>
 </module>

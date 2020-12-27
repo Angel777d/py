@@ -9,18 +9,17 @@ TIME_PERIOD = 5  # in seconds
 
 def move(dirname, filename):
     target_dir = rules.get_target(dirname, filename)
-    # print("ext", ext)
     if not target_dir:
-        # print("No folder for", ext)
+        # print("No folder for", target_dir)
         return
 
     if not os.path.isdir(target_dir):
-        # print("Error: target dir doesnt exist")
+        # print("Error: target dir doesnt exist:", target_dir)
         return
 
     src = os.path.join(dirname, filename)
     shutil.move(src, target_dir)
-    print("File moved:", src)
+    # print("File moved:", src)
 
 
 def move_files_task(lookup_dirs):
@@ -34,5 +33,9 @@ def move_files_task(lookup_dirs):
 def run(*args):
     print("Start watching files in:", args)
     while True:
-        move_files_task(args)
+        try:
+            move_files_task(args)
+        except Exception as e:
+            print("except:", e)
+            pass
         time.sleep(TIME_PERIOD)
