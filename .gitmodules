@@ -1,3 +1,0 @@
-[submodule "telegram_api"]
-	path = telegram_api
-	url = git@github.com:Angel777d/SimpleTGBotApi.git

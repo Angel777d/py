@@ -107,4 +107,10 @@ venv.bak/
 .idea/
 
 # local config
-home/buttler/config.json
+/MusicPLayer/
+/home/buttler/config.json
+/Eboshi.bat
+/home/Ebashi
+/ebashiEpicCache.json
+/ebashiSteamCache.json
+/home/media_controll/
