@@ -1,0 +1,20 @@
+{
+  "watchDir": "E:/downloads",
+  "rules": [
+    {
+      "name": "Torrents",
+      "targetPath": "//Keenetic_Giga/watch",
+      "extensions": [".torrent"]
+    },
+    {
+      "name": "Images",
+      "targetPath": "E:/Img",
+      "extensions": [".jpg", ".jpeg", ".png", ".gif"]
+    },
+    {
+      "name": "Video",
+      "targetPath": "E:/Movie",
+      "extensions": [".avi", ".mp4", ".mkv"]
+    }
+  ]
+}

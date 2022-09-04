@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 import time
@@ -10,16 +11,19 @@ TIME_PERIOD = 5  # in seconds
 def move(dirname, filename):
     target_dir = rules.get_target(dirname, filename)
     if not target_dir:
-        # print("No folder for", target_dir)
+        logging.debug(f"no target dir can be found for: {filename}")
         return
 
     if not os.path.isdir(target_dir):
-        # print("Error: target dir doesnt exist:", target_dir)
+        logging.warning(f'target dir "{target_dir}" doesnt exist')
         return
 
     src = os.path.join(dirname, filename)
-    shutil.move(src, target_dir)
-    # print("File moved:", src)
+    try:
+        shutil.move(src, target_dir)
+        logging.info(f'file "{filename}" moved to "{target_dir}" dir')
+    except Exception as ex:
+        logging.error(f"some shit happens: {ex}")
 
 
 def move_files_task(lookup_dirs):
@@ -31,11 +35,7 @@ def move_files_task(lookup_dirs):
 
 
 def run(*args):
-    print("Start watching files in:", args)
+    logging.info("watch files started!")
     while True:
-        try:
-            move_files_task(args)
-        except Exception as e:
-            print("except:", e)
-            pass
+        move_files_task(args)
         time.sleep(TIME_PERIOD)

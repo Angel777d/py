@@ -1,24 +1,33 @@
-import os
+import json
+import logging
+import pathlib
 
-DOWNLOADS = os.path.normpath("E:/downloads")
+logging.basicConfig(
+    filename='move_files.log',
+    filemode='w',
+    encoding='utf-8',
+    format='[%(asctime)s] %(message)s',
+    level=logging.INFO,
+)
 
-# rules
-RULES = {}
+CONFIG_PATH = "config.json"
 
+with open(CONFIG_PATH) as config:
+    __configData: dict = json.JSONDecoder().decode(config.read())
 
-def add_rule(path, exts):
-    RULES.update({ext: path for ext in exts})
+logging.info(f"config loaded:\n {json.dumps(__configData, indent=4)} \n")
 
-
-IMAGES = os.path.normpath("E:/Img")
-VIDEO = os.path.normpath("E:/Movie")
-TORRENTS = os.path.normpath("//Keenetic_Giga/watch")
-
-add_rule(TORRENTS, (".torrent",))
-add_rule(IMAGES, (".jpg", ".jpeg", ".png", ".gif",))
-add_rule(VIDEO, (".avi", ".mp4", ".mkv",))
+__rules = {}
+for rule in __configData.get("rules", []):
+    path = rule["targetPath"]
+    extensions = rule['extensions']
+    __rules.update({ext: path for ext in extensions})
 
 
 def get_target(dir, filename):
-    ext = os.path.splitext(filename)[1]
-    return RULES.get(ext, None)
+    ext = pathlib.Path(filename).suffix
+    return __rules.get(ext, None)
+
+
+def get_watch_dir():
+    return __configData.get("watchDir", pathlib.Path("~/downloads").expanduser())
