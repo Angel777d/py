@@ -1,5 +1,5 @@
 {
-  "watchDir": "E:/downloads",
+   "watchDirs": ["E:/downloads"],
   "rules": [
     {
       "name": "Torrents",

@@ -12,8 +12,8 @@ logging.basicConfig(
 
 CONFIG_PATH = "config.json"
 
-with open(CONFIG_PATH) as config:
-    __configData: dict = json.JSONDecoder().decode(config.read())
+with open(CONFIG_PATH) as json_data_file:
+    __configData = json.load(json_data_file)
 
 logging.info(f"config loaded:\n {json.dumps(__configData, indent=4)} \n")
 
@@ -24,10 +24,11 @@ for rule in __configData.get("rules", []):
     __rules.update({ext: path for ext in extensions})
 
 
-def get_target(dir, filename):
+def get_target(directory, filename):
     ext = pathlib.Path(filename).suffix
     return __rules.get(ext, None)
 
 
-def get_watch_dir():
-    return __configData.get("watchDir", pathlib.Path("~/downloads").expanduser())
+def get_watch_dirs():
+    default_value = (pathlib.Path("~/downloads").expanduser(), )
+    return __configData.get("watchDirs", default_value)

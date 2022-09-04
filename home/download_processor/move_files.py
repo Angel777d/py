@@ -29,13 +29,14 @@ def move(dirname, filename):
 def move_files_task(lookup_dirs):
     for lookup_dir in lookup_dirs:
         lookup_dir = os.path.normpath(lookup_dir)
-        for dirname, dirnames, filenames in os.walk(lookup_dir):
-            for filename in filenames:
-                move(dirname, filename)
+        for root, dirs, files in os.walk(lookup_dir):
+            for file in files:
+                move(root, file)
 
 
-def run(*args):
-    logging.info("watch files started!")
+def run():
+    watch_dirs = rules.get_watch_dirs()
+    logging.info(f"Start watching for: {watch_dirs}")
     while True:
-        move_files_task(args)
+        move_files_task(watch_dirs)
         time.sleep(TIME_PERIOD)
